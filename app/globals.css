@@ -86,7 +86,8 @@ body,
 }
 .embla__container {
   display: flex;
-  width: 1000px;
+  max-width: 1000px;
+  max-height: 400px;
 }
 .embla__slide {
   flex: 0 0 100%;
