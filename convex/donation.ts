@@ -4,14 +4,19 @@ const getAll = query({
   handler: async (ctx) => {
     const donation = await ctx.db.query('donation').collect();
     const donationRequests = await ctx.db.query('donation_request').collect();
+    const requestStatus = await ctx.db.query('ref_status').collect();
 
     const tableJoin = donation.map((donation) => {
       const relatedRequest = donationRequests.find(
         (request) => request._id === donation.donationRequest
       );
+      const relatedStatus = requestStatus.find(
+        (status) => status._id === relatedRequest?.status
+      );
       return {
         donation,
         donationRequest: relatedRequest,
+        donationStatus: relatedStatus?.name,
       };
     });
 
@@ -21,9 +26,8 @@ const getAll = query({
       image: data?.donationRequest?.image,
       startDate: data?.donationRequest?.startDate,
       endDate: data?.donationRequest?.endDate,
-      requestStatus:
-        data?.donationRequest?.status === 'Pending' ? 'Pending' : 'Completed',
-      donationStatus: data?.donation.status === false ? 'Pending' : 'Completed',
+      requestStatus: data?.donationStatus,
+      donationStatus: data?.donation.status === false ? 'Not Active' : 'Active',
     }));
 
     return donations;
