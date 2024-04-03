@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as cloth from "../cloth.js";
+import type * as donation from "../donation.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,6 +27,7 @@ import type * as cloth from "../cloth.js";
  */
 declare const fullApi: ApiFromModules<{
   cloth: typeof cloth;
+  donation: typeof donation;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

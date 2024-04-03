@@ -6,6 +6,7 @@ const createCloth = mutation({
     clothName: v.string(),
     clothSize: v.string(),
     clothType: v.string(),
+    clothImage: v.string(),
     clothCategory: v.id('ref_cloth_category'),
   },
   handler: async (ctx, args) => {
@@ -20,10 +21,11 @@ const createCloth = mutation({
     // const userId = 'js724gk08gd45q55yk9bm2x1sh6pexds';
 
     const cloth = await ctx.db.insert('user_cloth', {
-      clothName: args.clothName,
-      clothSize: args.clothSize,
-      clothType: args.clothType,
-      clothCategory: args.clothCategory,
+      name: args.clothName,
+      size: args.clothSize,
+      type: args.clothType,
+      image: args.clothImage,
+      category: args.clothCategory,
       userId,
     });
 
@@ -88,7 +90,7 @@ const getClothByCategory = query({
     // const identity = await ctx.auth.getUserIdentity();
     const cloth = await ctx.db
       .query('user_cloth')
-      .filter((q) => q.eq(q.field('clothCategory'), args.clothCategory))
+      .filter((q) => q.eq(q.field('category'), args.clothCategory))
       .collect();
 
     // if (!identity) {

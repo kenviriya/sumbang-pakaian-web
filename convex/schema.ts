@@ -8,9 +8,9 @@ export default defineSchema({
     clothCount: v.number(),
   }).index('userId', ['userId']),
   donation: defineTable({
-    donationRequest: v.number(),
+    donationRequest: v.id('donation_request'),
     status: v.boolean(),
-  }),
+  }).index('donationRequest', ['donationRequest']),
   user_contribution: defineTable({
     userId: v.string(),
     contributionQuantity: v.number(),
@@ -22,7 +22,9 @@ export default defineSchema({
   donation_request: defineTable({
     userId: v.string(),
     image: v.string(),
-    status: v.boolean(),
+    title: v.string(),
+    description: v.string(),
+    status: v.id('ref_status'),
     startDate: v.string(),
     endDate: v.string(),
   }).index('userId', ['userId']),
@@ -46,6 +48,9 @@ export default defineSchema({
     category: v.id('ref_cloth_category'),
   }).index('userId', ['userId']),
   ref_cloth_category: defineTable({
-    categoryName: v.string(),
+    name: v.string(),
+  }),
+  ref_status: defineTable({
+    name: v.string(),
   }),
 });
