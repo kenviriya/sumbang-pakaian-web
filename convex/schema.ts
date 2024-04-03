@@ -46,7 +46,11 @@ export default defineSchema({
     size: v.string(),
     type: v.string(),
     category: v.id('ref_cloth_category'),
-  }).index('userId', ['userId']),
+  })
+    .index('userId', ['userId'])
+    .index('category', ['category'])
+    .index('type', ['type'])
+    .index('size', ['size']),
   ref_cloth_category: defineTable({
     name: v.string(),
   }),

@@ -45,6 +45,7 @@ const getDonationById = query({
     if (!getDonation) {
       throw new Error('Donation not found');
     }
+
     const donationRequests = await ctx.db.query('donation_request').collect();
     const requestStatus = await ctx.db.query('ref_status').collect();
 

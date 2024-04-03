@@ -82,27 +82,32 @@ const getClothById = query({
   },
 });
 
-const getClothByCategory = query({
+const filterCloth = query({
   args: {
-    clothCategory: v.id('ref_cloth_category'),
+    clothCategory: v.optional(v.id('ref_cloth_category')),
+    clothType: v.optional(v.string()),
+    clothSize: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    // const identity = await ctx.auth.getUserIdentity();
-    const cloth = await ctx.db
-      .query('user_cloth')
-      .filter((q) => q.eq(q.field('category'), args.clothCategory))
-      .collect();
+    let getCloth = await ctx.db.query('user_cloth').collect();
 
-    // if (!identity) {
-    //   throw new Error('Not authenticated');
-    // }
-
-    if (!cloth) {
-      throw new Error('Cloth not found');
+    if (args.clothCategory) {
+      const clothCategory = args.clothCategory;
+      getCloth = getCloth.filter((cloth) => cloth.category === clothCategory);
     }
 
-    return cloth;
+    if (args.clothType) {
+      const clothType = args.clothType;
+      getCloth = getCloth.filter((cloth) => cloth.type === clothType);
+    }
+
+    if (args.clothSize) {
+      const clothSize = args.clothSize;
+      getCloth = getCloth.filter((cloth) => cloth.size === clothSize);
+    }
+
+    return getCloth;
   },
 });
 
-export {createCloth, getCloth, getClothById, getClothByCategory};
+export {createCloth, getCloth, getClothById, filterCloth};
