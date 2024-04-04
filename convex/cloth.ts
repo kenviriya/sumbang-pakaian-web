@@ -18,8 +18,6 @@ const createCloth = mutation({
 
     const userId = identity.subject;
 
-    // const userId = 'js724gk08gd45q55yk9bm2x1sh6pexds';
-
     const cloth = await ctx.db.insert('user_cloth', {
       name: args.clothName,
       size: args.clothSize,
@@ -35,15 +33,13 @@ const createCloth = mutation({
 
 const getCloth = query({
   handler: async (ctx) => {
-    // const identity = await ctx.auth.getUserIdentity();
+    const identity = await ctx.auth.getUserIdentity();
 
-    // if (!identity) {
-    //   throw new Error('Not authenticated');
-    // }
+    if (!identity) {
+      throw new Error('Not authenticated');
+    }
 
-    // const userId = identity.subject;
-
-    const userId = 'js724gk08gd45q55yk9bm2x1sh6pexds';
+    const userId = identity.subject;
 
     const userClothes = await ctx.db
       .query('user_cloth')
@@ -63,16 +59,15 @@ const getClothById = query({
     const identity = await ctx.auth.getUserIdentity();
     const cloth = await ctx.db.get(args.clothId);
 
-    // if (!identity) {
-    //   throw new Error('Not authenticated');
-    // }
+    if (!identity) {
+      throw new Error('Not authenticated');
+    }
 
     if (!cloth) {
       throw new Error('Cloth not found');
     }
 
-    // const userId = identity.subject;
-    const userId = 'js724gk08gd45q55yk9bm2x1sh6pexds';
+    const userId = identity.subject;
 
     if (cloth.userId !== userId) {
       throw new Error('Cloth not found');
