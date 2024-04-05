@@ -5,19 +5,24 @@ const getAllDonation = query({
   handler: async (ctx) => {
     const donation = await ctx.db.query('donation').collect();
     const donationRequests = await ctx.db.query('donation_request').collect();
-    const requestStatus = await ctx.db.query('ref_status').collect();
+    const requestStatus = await ctx.db.query('ref_request_status').collect();
+    const donationStatus = await ctx.db.query('ref_donation_status').collect();
 
     const tableJoin = donation.map((donation) => {
       const relatedRequest = donationRequests.find(
         (request) => request._id === donation.donationRequest
       );
-      const relatedStatus = requestStatus.find(
+      const relatedRequestStatus = requestStatus.find(
         (status) => status._id === relatedRequest?.status
+      );
+      const relatedStatusDonation = donationStatus.find(
+        (status) => status._id === donation.status
       );
       return {
         donation,
         donationRequest: relatedRequest,
-        donationStatus: relatedStatus?.name,
+        requestStatus: relatedRequestStatus?.status,
+        donationStatus: relatedStatusDonation?.status,
       };
     });
 
@@ -27,8 +32,8 @@ const getAllDonation = query({
       image: data?.donationRequest?.image,
       startDate: data?.donationRequest?.startDate,
       endDate: data?.donationRequest?.endDate,
-      requestStatus: data?.donationStatus,
-      donationStatus: data?.donation.status === false ? 'Not Active' : 'Active',
+      requestStatus: data?.requestStatus,
+      donationStatus: data?.donationStatus,
     }));
 
     return donations;
@@ -47,15 +52,20 @@ const getDonationById = query({
     }
 
     const donationRequests = await ctx.db.query('donation_request').collect();
-    const requestStatus = await ctx.db.query('ref_status').collect();
+    const requestStatus = await ctx.db.query('ref_request_status').collect();
+    const donationStatus = await ctx.db.query('ref_donation_status').collect();
 
     const tableJoin = donationRequests.map((donationRequest) => {
-      const relatedStatus = requestStatus.find(
+      const relatedRequestStatus = requestStatus.find(
         (status) => status._id === donationRequest?.status
+      );
+      const relatedStatusDonation = donationStatus.find(
+        (status) => status._id === getDonation.status
       );
       return {
         donationRequest,
-        donationStatus: relatedStatus?.name,
+        requestStatus: relatedRequestStatus?.status,
+        donationStatus: relatedStatusDonation?.status,
       };
     });
 
@@ -73,8 +83,8 @@ const getDonationById = query({
       image: donationRequest?.donationRequest?.image,
       startDate: donationRequest?.donationRequest?.startDate,
       endDate: donationRequest?.donationRequest?.endDate,
-      requestStatus: donationRequest?.donationStatus,
-      donationStatus: getDonation.status === false ? 'Not Active' : 'Active',
+      requestStatus: donationRequest?.requestStatus,
+      donationStatus: donationRequest?.donationStatus,
     };
 
     return donation;

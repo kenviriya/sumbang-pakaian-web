@@ -9,8 +9,11 @@ export default defineSchema({
   }).index('userId', ['userId']),
   donation: defineTable({
     donationRequest: v.id('donation_request'),
-    status: v.boolean(),
+    status: v.id('ref_donation_status'),
   }).index('donationRequest', ['donationRequest']),
+  ref_donation_status: defineTable({
+    status: v.string(),
+  }),
   user_contribution: defineTable({
     userId: v.string(),
     contributionQuantity: v.number(),
@@ -24,10 +27,13 @@ export default defineSchema({
     image: v.string(),
     title: v.string(),
     description: v.string(),
-    status: v.id('ref_status'),
+    status: v.id('ref_request_status'),
     startDate: v.string(),
     endDate: v.string(),
   }).index('userId', ['userId']),
+  ref_request_status: defineTable({
+    status: v.string(),
+  }),
   map_request_details: defineTable({
     donationRequestId: v.id('donation_request'),
     clothId: v.id('cloth_request'),
@@ -54,7 +60,13 @@ export default defineSchema({
   ref_cloth_category: defineTable({
     name: v.string(),
   }),
-  ref_status: defineTable({
-    name: v.string(),
+  notification: defineTable({
+    userId: v.string(),
+    title: v.string(),
+    description: v.string(),
+    status: v.boolean(),
+  }).index('userId', ['userId']),
+  ref_notification_status: defineTable({
+    status: v.string(),
   }),
 });
