@@ -1,7 +1,7 @@
 import {v} from 'convex/values';
 import {mutation, query} from './_generated/server';
-import { api } from '@/convex/_generated/api';
-import { Id } from './_generated/dataModel';
+import {api} from '@/convex/_generated/api';
+import {Id} from './_generated/dataModel';
 
 const getAllDonation = query({
   handler: async (ctx) => {
@@ -93,7 +93,6 @@ const getDonationById = query({
   },
 });
 
-
 const createDonationRequest = mutation({
   args: {
     donationTitle: v.string(),
@@ -103,12 +102,13 @@ const createDonationRequest = mutation({
   },
   handler: async (ctx, args) => {
     const statusDonation = await ctx.db.query('ref_request_status').collect();
+    // naming sebuah function kalau bisa lebih sesuai dengan apa yang di lakukan function tersebut
     const statusFound = statusDonation.find(
-        (data) => data?._id === args.donationStatus
+      (data) => data?._id === args.donationStatus
     );
 
-    if(!statusFound){
-      throw new Error("Request Status not Validated");
+    if (!statusFound) {
+      throw new Error('Request Status not Validated');
     }
 
     const identity = await ctx.auth.getUserIdentity();
@@ -119,24 +119,28 @@ const createDonationRequest = mutation({
 
     const userId = identity.subject;
 
-    const currentDate = new Date(); 
+    // start date dan end date akan di input oleh user bukan kita yang tentukan oleh kita
 
-    
-    const currentDateString = currentDate.toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+    const currentDate = new Date();
 
-    
+    // kalau bisa ubah jadi ke id-ID timzone nya jakarta atau bangkok
+    const currentDateString = currentDate.toLocaleString('en-US', {
+      timeZone: 'Asia/Singapore',
+    });
+
     const deadline = new Date(currentDate);
     deadline.setMonth(currentDate.getMonth() + 3);
 
-    const deadlines = deadline.toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
-
+    const deadlines = deadline.toLocaleString('en-US', {
+      timeZone: 'Asia/Singapore',
+    });
 
     const cloth = await ctx.db.insert('donation_request', {
       description: args.donationDescription,
       endDate: deadlines,
       image: args.donationImage,
       startDate: currentDateString,
-      status: args.donationStatus as Id<"ref_request_status">,
+      status: args.donationStatus as Id<'ref_request_status'>,
       title: args.donationTitle,
       userId,
     });
@@ -144,6 +148,5 @@ const createDonationRequest = mutation({
     return cloth;
   },
 });
-
 
 export {getAllDonation, getDonationById, createDonationRequest};
