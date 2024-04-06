@@ -1,5 +1,7 @@
 import {v} from 'convex/values';
-import {query} from './_generated/server';
+import {mutation, query} from './_generated/server';
+import { api } from '@/convex/_generated/api';
+import { Id } from './_generated/dataModel';
 
 const getAllDonation = query({
   handler: async (ctx) => {
@@ -91,4 +93,57 @@ const getDonationById = query({
   },
 });
 
-export {getAllDonation, getDonationById};
+
+const createDonationRequest = mutation({
+  args: {
+    donationTitle: v.string(),
+    donationDescription: v.string(),
+    donationImage: v.string(),
+    donationStatus: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const statusDonation = await ctx.db.query('ref_request_status').collect();
+    const statusFound = statusDonation.find(
+        (data) => data?._id === args.donationStatus
+    );
+
+    if(!statusFound){
+      throw new Error("Request Status not Validated");
+    }
+
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error('Not authenticated');
+    }
+
+    const userId = identity.subject;
+
+    const currentDate = new Date(); 
+
+    
+    const currentDateString = currentDate.toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+
+    
+    const deadline = new Date(currentDate);
+    deadline.setMonth(currentDate.getMonth() + 3);
+
+    const deadlines = deadline.toLocaleString('en-US', { timeZone: 'Asia/Singapore' });
+
+
+    const cloth = await ctx.db.insert('donation_request', {
+      description: args.donationDescription,
+      endDate: deadlines,
+      image: args.donationImage,
+      startDate: currentDateString,
+      status: args.donationStatus as Id<"ref_request_status">,
+      title: args.donationTitle,
+      userId,
+    });
+
+    return cloth;
+  },
+});
+
+
+export {getAllDonation, getDonationById, createDonationRequest};
