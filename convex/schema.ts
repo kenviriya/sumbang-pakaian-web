@@ -60,12 +60,14 @@ export default defineSchema({
   ref_cloth_category: defineTable({
     name: v.string(),
   }),
+  
   notification: defineTable({
     userId: v.string(),
     title: v.string(),
     description: v.string(),
     status: v.boolean(),
   }).index('userId', ['userId']),
+
   ref_notification_status: defineTable({
     status: v.string(),
   }),
