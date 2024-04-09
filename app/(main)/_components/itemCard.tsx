@@ -12,17 +12,11 @@ import {Shirt} from 'lucide-react';
 
 interface ItemCardProps {
   imageUrl: string;
-  imageAlt: string;
   title: string;
   description: string;
 }
 
-const ItemCard: React.FC<ItemCardProps> = ({
-  imageUrl,
-  imageAlt,
-  title,
-  description,
-}) => {
+const ItemCard: React.FC<ItemCardProps> = ({imageUrl, title, description}) => {
   const truncateDescription = (description: string) => {
     const words = description.split(' ');
     if (words.length > 15) {
@@ -37,7 +31,7 @@ const ItemCard: React.FC<ItemCardProps> = ({
         <CardContent className="p-0">
           <Image
             src={imageUrl}
-            alt={imageAlt}
+            alt={title}
             width={250}
             height={300}
             className="rounded-t-lg"
