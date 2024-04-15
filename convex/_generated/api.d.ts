@@ -16,7 +16,7 @@ import type {
 } from "convex/server";
 import type * as cloth from "../cloth.js";
 import type * as donationRequests from "../donationRequests.js";
-import type * as donors from "../donors.js";
+import type * as user from "../user.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -29,7 +29,7 @@ import type * as donors from "../donors.js";
 declare const fullApi: ApiFromModules<{
   cloth: typeof cloth;
   donationRequests: typeof donationRequests;
-  donors: typeof donors;
+  user: typeof user;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

@@ -280,4 +280,4 @@ const createMapDonationContribution = mutation({
 
 
 
-export {getAllDonation, getDonationById, getDonationStatus, getRequestDonationStatus, createDonationRequest, createDonation, createMapRequestDetail, createNotification};
+export {getAllDonation, getDonationById, getDonationStatus, getRequestDonationStatus, createDonationRequest, createDonation, createMapRequestDetail, createNotification, createMapDonationContribution};
