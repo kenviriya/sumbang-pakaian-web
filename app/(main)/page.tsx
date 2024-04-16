@@ -65,12 +65,17 @@ const HomePage = () => {
       <Heading />
       <div className="px-[4%] bg-[#f8f7f4] flex flex-row flex-wrap justify-start gap-x-9 gap-y-6 pt-9">
         {items.map((item) => (
-          <ItemCard
+          <div
             key={item.donationId}
-            imageUrl={item.imageUrl}
-            title={item.title}
-            description={item.description}
-          />
+            className="w-full md:w-auto text-center md:text-left"
+          >
+            <ItemCard
+              imageUrl={item.imageUrl}
+              title={item.title}
+              description={item.description}
+              donationId={item.donationId}
+            />
+          </div>
         ))}
       </div>
     </div>
