@@ -1,8 +1,12 @@
 'use client';
+import * as React from 'react';
+import { useEdgeStore } from '@/lib/edgestore';
 import {Carousel} from './_components/carousel';
 import ItemCard from './_components/itemCard';
 
 const HomePage = () => {
+  const [file, setFile] = React.useState<File>();
+  const { edgestore } = useEdgeStore();
   const items = [
     {
       imageUrl: '/carousel-1.jpg',
@@ -55,6 +59,29 @@ const HomePage = () => {
   ];
   return (
     <div className="h-full w-full">
+      <div>
+      <input
+        type="file"
+        onChange={(e) => {
+          setFile(e.target.files?.[0]);
+        }}
+      />
+      <button
+        onClick={async () => {
+          if (file) {
+            const res = await edgestore.publicFiles.upload({
+              file,
+              onProgressChange: (progress) => {
+                // you can use this to show a progress bar
+                console.log(progress);
+              },
+            });
+            }
+        }}
+      >
+        Upload
+      </button>
+    </div>
       <div className="flex flex-col items-center">
         <Carousel />
       </div>
