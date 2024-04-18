@@ -9,6 +9,8 @@ import {Spinner} from '@/components/spinner';
 
 import {LogIn} from 'lucide-react';
 import Logo from './logo';
+import Notification from './notification';
+import Link from 'next/link';
 
 const Navbar = () => {
   const {isAuthenticated, isLoading} = useConvexAuth();
@@ -39,7 +41,13 @@ const Navbar = () => {
             {/* <Button variant={'ghost'} size={'sm'} asChild>
               <Link href={'/documents'}>Enter Jotion</Link>
             </Button> */}
-            <UserButton afterSignOutUrl="/" />
+            <Notification />
+            <Button className="mr-3">
+              <Link href={'/kontribusi'}>Kontribusi</Link>
+            </Button>
+            <div className="hidden md:flex">
+              <UserButton afterSignOutUrl="/" />
+            </div>
           </>
         )}
       </div>

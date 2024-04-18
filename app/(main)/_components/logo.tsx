@@ -2,6 +2,7 @@ import {Poppins} from 'next/font/google';
 
 import {cn} from '@/lib/utils';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const font = Poppins({
   subsets: ['latin'],
@@ -15,21 +16,24 @@ interface Props {
 const Logo = ({text}: Props) => {
   return (
     <>
-      {/* if text true then show text logo, else show icon logo  */}
       {text ? (
-        <div className="hidden md:flex items-center gap-x-2">
-          <p className={cn('font-bold text-[#0085FF]', font.className)}>
-            Sumbang
-          </p>
-          <Image src="/Logo-icon.svg" alt="Logo" width={40} height={40} />
-          <p className={cn('font-bold text-[#ff7a00]', font.className)}>
-            Pakaian
-          </p>
-        </div>
+        <Link href={'/'}>
+          <div className="hidden md:flex items-center gap-x-2">
+            <p className={cn('font-bold text-[#0085FF]', font.className)}>
+              Sumbang
+            </p>
+            <Image src="/Logo-icon.svg" alt="Logo" width={40} height={40} />
+            <p className={cn('font-bold text-[#ff7a00]', font.className)}>
+              Pakaian
+            </p>
+          </div>
+        </Link>
       ) : (
-        <div className="hidden md:flex items-center gap-x-2">
-          <Image src="/Logo-icon.svg" alt="Logo" width={40} height={40} />
-        </div>
+        <Link href={'/'}>
+          <div className="hidden md:flex items-center gap-x-2">
+            <Image src="/Logo-icon.svg" alt="Logo" width={40} height={40} />
+          </div>
+        </Link>
       )}
     </>
   );

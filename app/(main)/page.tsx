@@ -63,12 +63,9 @@ const HomePage = () => {
   return (
     <div className="h-full w-full">
       <Heading />
-      <div className="px-[4%] bg-[#f8f7f4] flex flex-row flex-wrap justify-start gap-x-9 gap-y-6 pt-9">
+      <div className="px-[4%] bg-[#f8f7f4] flex flex-row flex-wrap justify-center gap-x-9 gap-y-6 pt-9">
         {items.map((item) => (
-          <div
-            key={item.donationId}
-            className="w-full md:w-auto text-center md:text-left"
-          >
+          <div key={item.donationId}>
             <ItemCard
               imageUrl={item.imageUrl}
               title={item.title}

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/card';
 
 import Image from 'next/image';
+import {Shirt} from 'lucide-react';
 
 const DonationDetailPage = () => {
   return (
@@ -49,7 +50,10 @@ const DonationDetailPage = () => {
 
           <CardFooter className="flex">
             <div className="w-full">
-              <Button className="w-full">Donate</Button>
+              <Button className="w-full">
+                <Shirt className="mr-2 h-4 w-4" />
+                Sumbang
+              </Button>
             </div>
           </CardFooter>
         </Card>

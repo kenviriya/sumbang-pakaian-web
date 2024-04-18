@@ -37,38 +37,34 @@ const ItemCard = ({
   };
 
   return (
-    <div className="mt-2 flex justify-center">
-      <Card className="w-[250px] h-[380px]">
-        <CardContent className="p-0">
-          <Image
-            src={imageUrl}
-            alt={title}
-            width={250}
-            height={300}
-            className="rounded-t-lg"
-          />
-        </CardContent>
-        <div className="flex flex-col justify-between h-[150px]">
-          <CardHeader>
-            <CardTitle>{title}</CardTitle>
-            <CardDescription>
-              {truncateDescription(description)}
-            </CardDescription>
-          </CardHeader>
-        </div>
-        <CardFooter>
-          <Button
-            className="w-full"
-            onClick={() => {
-              router.push(`/donation/${donationId}`);
-            }}
-          >
-            <Shirt className="mr-2 h-4 w-4" />
-            Donate
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+    <Card className="w-[250px] h-[380px]">
+      <CardContent className="p-0">
+        <Image
+          src={imageUrl}
+          alt={title}
+          width={250}
+          height={300}
+          className="rounded-t-lg"
+        />
+      </CardContent>
+      <div className="flex flex-col justify-between h-[150px]">
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{truncateDescription(description)}</CardDescription>
+        </CardHeader>
+      </div>
+      <CardFooter>
+        <Button
+          className="w-full"
+          onClick={() => {
+            router.push(`/donation/${donationId}`);
+          }}
+        >
+          <Shirt className="mr-2 h-4 w-4" />
+          Sumbang
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 
