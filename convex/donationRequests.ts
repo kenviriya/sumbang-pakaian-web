@@ -44,16 +44,20 @@ const getAllDonation = query({
 
 const getDonationStatus = query({
   handler: async (ctx) => {
-      const getDonationStatus = await ctx.db.query('ref_donation_status').collect();
-      return getDonationStatus;
-  }
+    const getDonationStatus = await ctx.db
+      .query('ref_donation_status')
+      .collect();
+    return getDonationStatus;
+  },
 });
 
 const getRequestDonationStatus = query({
   handler: async (ctx) => {
-      const getRequestDonationStatus = await ctx.db.query('ref_request_status').collect();
-      return getRequestDonationStatus;
-  }
+    const getRequestDonationStatus = await ctx.db
+      .query('ref_request_status')
+      .collect();
+    return getRequestDonationStatus;
+  },
 });
 
 const getDonationById = query({
@@ -114,7 +118,7 @@ const createDonationRequest = mutation({
     donationImage: v.string(),
     donationStatus: v.string(),
     donationEndDate: v.string(),
-    donationStartDate: v.string()
+    donationStartDate: v.string(),
   },
   handler: async (ctx, args) => {
     const statusDonation = await ctx.db.query('ref_request_status').collect();
@@ -185,7 +189,7 @@ const createDonation = mutation({
 
     const donationCreate = await ctx.db.insert('donation', {
       donationRequest: args.donationRequest as Id<'donation_request'>,
-      status: args.donationStatus as Id<'ref_donation_status'>
+      status: args.donationStatus as Id<'ref_donation_status'>,
     });
 
     return donationCreate;
@@ -200,9 +204,7 @@ const createMapRequestDetail = mutation({
   handler: async (ctx, args) => {
     const cloth = await ctx.db.query('cloth_request').collect();
     const donationRequest = await ctx.db.query('donation_request').collect();
-    const checkCloth = cloth.find(
-      (data) => data?._id === args.donationCloth
-    );
+    const checkCloth = cloth.find((data) => data?._id === args.donationCloth);
     const donationRequestCheck = donationRequest.find(
       (data) => data?._id === args.donationRequest
     );
@@ -213,8 +215,7 @@ const createMapRequestDetail = mutation({
 
     const mapRequestDetail = await ctx.db.insert('map_request_details', {
       clothId: args.donationCloth as Id<'cloth_request'>,
-      donationRequestId: args.donationRequest as Id<'donation_request'>
-      
+      donationRequestId: args.donationRequest as Id<'donation_request'>,
     });
 
     return mapRequestDetail;
@@ -225,10 +226,9 @@ const createNotification = mutation({
   args: {
     notificationDescription: v.string(),
     notificationStatus: v.boolean(),
-    notificationTitle: v.string()
+    notificationTitle: v.string(),
   },
   handler: async (ctx, args) => {
-
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
@@ -241,7 +241,7 @@ const createNotification = mutation({
       description: args.notificationDescription,
       status: args.notificationStatus,
       title: args.notificationTitle,
-      userId
+      userId,
     });
 
     return createNotification;
@@ -254,7 +254,9 @@ const createMapDonationContribution = mutation({
     donationId: v.string(),
   },
   handler: async (ctx, args) => {
-    const donationContribution = await ctx.db.query('user_contribution').collect();
+    const donationContribution = await ctx.db
+      .query('user_contribution')
+      .collect();
     const donation = await ctx.db.query('donation').collect();
     const contributionCheck = donationContribution.find(
       (data) => data?._id === args.donationContributionId
@@ -267,17 +269,27 @@ const createMapDonationContribution = mutation({
       throw new Error('Error in Checking Request Detail');
     }
 
-    const createMapDonationContribution = await ctx.db.insert('map_donation_contribution', {
-      donationContriboutionId: args.donationContributionId as Id<'user_contribution'>,
-      donationId: args.donationId as Id<'donation'>
-      
-    });
+    const createMapDonationContribution = await ctx.db.insert(
+      'map_donation_contribution',
+      {
+        donationContriboutionId:
+          args.donationContributionId as Id<'user_contribution'>,
+        donationId: args.donationId as Id<'donation'>,
+      }
+    );
 
     return createMapDonationContribution;
   },
 });
 
-
-
-
-export {getAllDonation, getDonationById, getDonationStatus, getRequestDonationStatus, createDonationRequest, createDonation, createMapRequestDetail, createNotification, createMapDonationContribution};
+export {
+  getAllDonation,
+  getDonationById,
+  getDonationStatus,
+  getRequestDonationStatus,
+  createDonationRequest,
+  createDonation,
+  createMapRequestDetail,
+  createNotification,
+  createMapDonationContribution,
+};
