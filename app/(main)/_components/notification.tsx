@@ -11,7 +11,7 @@ const Notification = () => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant={'ghost'}>
+        <Button variant={'ghost'} size={'icon'}>
           <Bell className="h-4 w-4" />
           {/* <BellDot className="h-4 w-4" color="red" /> */}
         </Button>

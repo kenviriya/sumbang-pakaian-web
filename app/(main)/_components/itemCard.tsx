@@ -12,6 +12,9 @@ import {
 import Image from 'next/image';
 import {Shirt} from 'lucide-react';
 import {useRouter} from 'next/navigation';
+import {useConvexAuth} from 'convex/react';
+import {SignInButton} from '@clerk/clerk-react';
+import {Skeleton} from '@/components/ui/skeleton';
 
 interface ItemCardProps {
   imageUrl: string;
@@ -26,6 +29,7 @@ const ItemCard = ({
   description,
   donationId,
 }: ItemCardProps) => {
+  const {isAuthenticated, isLoading} = useConvexAuth();
   const router = useRouter();
 
   const truncateDescription = (description: string) => {
@@ -54,15 +58,26 @@ const ItemCard = ({
         </CardHeader>
       </div>
       <CardFooter>
-        <Button
-          className="w-full"
-          onClick={() => {
-            router.push(`/donation/${donationId}`);
-          }}
-        >
-          <Shirt className="mr-2 h-4 w-4" />
-          Sumbang
-        </Button>
+        {isLoading && <Skeleton className="w-full h-10" />}
+        {isAuthenticated && !isLoading && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              router.push(`/donation/${donationId}`);
+            }}
+          >
+            <Shirt className="mr-2 h-4 w-4" />
+            Sumbang
+          </Button>
+        )}
+        {!isAuthenticated && !isLoading && (
+          <SignInButton mode="modal">
+            <Button className="w-full">
+              <Shirt className="mr-2 h-4 w-4" />
+              Sumbang
+            </Button>
+          </SignInButton>
+        )}
       </CardFooter>
     </Card>
   );

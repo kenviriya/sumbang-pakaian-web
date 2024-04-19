@@ -19,7 +19,7 @@ const Navbar = () => {
   return (
     <div
       className={cn(
-        'z-50 bg-background fixed top-0 flex items-center w-full px-[4%] py-6 bg-[#f8f7f4]',
+        'z-50 bg-background fixed top-0 flex items-center w-full px-[4%] py-5 bg-[#f8f7f4]',
         scrolled && 'border-b shadow-sm'
       )}
     >
@@ -43,7 +43,7 @@ const Navbar = () => {
             </Button> */}
             <Notification />
             <Button className="mr-3">
-              <Link href={'/kontribusi'}>Kontribusi</Link>
+              <Link href={'/contribution'}>Kontribusi</Link>
             </Button>
             <div className="hidden md:flex">
               <UserButton afterSignOutUrl="/" />
