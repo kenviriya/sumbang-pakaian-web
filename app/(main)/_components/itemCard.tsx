@@ -12,6 +12,9 @@ import {
 import Image from 'next/image';
 import {Shirt} from 'lucide-react';
 import {useRouter} from 'next/navigation';
+import {useConvexAuth} from 'convex/react';
+import {SignInButton} from '@clerk/clerk-react';
+import {Skeleton} from '@/components/ui/skeleton';
 
 interface ItemCardProps {
   imageUrl: string;
@@ -26,6 +29,7 @@ const ItemCard = ({
   description,
   donationId,
 }: ItemCardProps) => {
+  const {isAuthenticated, isLoading} = useConvexAuth();
   const router = useRouter();
 
   const truncateDescription = (description: string) => {
@@ -37,26 +41,25 @@ const ItemCard = ({
   };
 
   return (
-    <div className="mt-2 flex justify-center">
-      <Card className="w-[250px] h-[380px]">
-        <CardContent className="p-0">
-          <Image
-            src={imageUrl}
-            alt={title}
-            width={250}
-            height={300}
-            className="rounded-t-lg"
-          />
-        </CardContent>
-        <div className="flex flex-col justify-between h-[150px]">
-          <CardHeader>
-            <CardTitle>{title}</CardTitle>
-            <CardDescription>
-              {truncateDescription(description)}
-            </CardDescription>
-          </CardHeader>
-        </div>
-        <CardFooter>
+    <Card className="w-[250px] h-[380px]">
+      <CardContent className="p-0">
+        <Image
+          src={imageUrl}
+          alt={title}
+          width={250}
+          height={300}
+          className="rounded-t-lg"
+        />
+      </CardContent>
+      <div className="flex flex-col justify-between h-[150px]">
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{truncateDescription(description)}</CardDescription>
+        </CardHeader>
+      </div>
+      <CardFooter>
+        {isLoading && <Skeleton className="w-full h-10" />}
+        {isAuthenticated && !isLoading && (
           <Button
             className="w-full"
             onClick={() => {
@@ -64,11 +67,19 @@ const ItemCard = ({
             }}
           >
             <Shirt className="mr-2 h-4 w-4" />
-            Donate
+            Sumbang
           </Button>
-        </CardFooter>
-      </Card>
-    </div>
+        )}
+        {!isAuthenticated && !isLoading && (
+          <SignInButton mode="modal">
+            <Button className="w-full">
+              <Shirt className="mr-2 h-4 w-4" />
+              Sumbang
+            </Button>
+          </SignInButton>
+        )}
+      </CardFooter>
+    </Card>
   );
 };
 
