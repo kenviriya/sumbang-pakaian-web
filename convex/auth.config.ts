@@ -1,8 +1,8 @@
 export default {
   providers: [
     {
-      domain: 'https://your-issuer-url.clerk.accounts.dev/',
-      applicationID: 'convex',
+      domain: "https://central-griffon-34.clerk.accounts.dev",
+      applicationID: "convex",
     },
   ],
 };
