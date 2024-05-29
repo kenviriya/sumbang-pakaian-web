@@ -32,6 +32,8 @@ const UserClothesHistory = () => {
               id={cloth.clothId}
               imageUrl={cloth.imageUrl}
               title={cloth.title}
+              description={''}
+              status={''}
             />
             <Separator className="mt-2" />
           </div>
