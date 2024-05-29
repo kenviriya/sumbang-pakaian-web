@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Select,
@@ -8,7 +8,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Form,
   FormControl,
@@ -17,27 +17,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import {Input} from '@/components/ui/input';
-import {Button} from '@/components/ui/button';
-import {Textarea} from '@/components/ui/textarea';
-import {Separator} from '@/components/ui/separator';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Separator } from "@/components/ui/separator";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 
-import {CirclePlus, MinusCircle, SendHorizonal} from 'lucide-react';
+import { CirclePlus, MinusCircle, SendHorizonal } from "lucide-react";
 
-import {useForm} from 'react-hook-form';
-import {toast} from 'sonner';
-import {useState} from 'react';
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { useState } from "react";
 
-import {z} from 'zod';
-import {zodResolver} from '@hookform/resolvers/zod';
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 // import {Calendar} from '@/components/ui/calendar';
 // import {Check, ChevronsUpDown} from 'lucide-react';
@@ -55,24 +55,24 @@ import {zodResolver} from '@hookform/resolvers/zod';
 
 const FormSchema = z.object({
   title: z.string().min(5, {
-    message: 'Title must be at least 5 characters.',
+    message: "Title must be at least 5 characters.",
   }),
   duration: z.string({
-    required_error: 'A campaign duration is required.',
+    required_error: "A campaign duration is required.",
   }),
   desc: z
     .string()
     .min(10, {
-      message: 'Bio must be at least 10 characters.',
+      message: "Bio must be at least 10 characters.",
     })
     .max(160, {
-      message: 'Bio must not be longer than 30 characters.',
+      message: "Bio must not be longer than 30 characters.",
     }),
   name: z.string().min(5, {
-    message: 'Title must be at least 5 characters.',
+    message: "Title must be at least 5 characters.",
   }),
   address: z.string().min(5, {
-    message: 'Title must be at least 5 characters.',
+    message: "Title must be at least 5 characters.",
   }),
   clothes: z.array(
     z.object({
@@ -80,10 +80,9 @@ const FormSchema = z.object({
       gender: z.string(),
       size: z.string(),
       quantity: z.string({
-        required_error: 'Tidak boleh kosong',
-        invalid_type_error: 'Quantity harus angka',
+        required_error: "Tidak boleh kosong",
       }),
-    })
+    }),
   ),
 });
 
@@ -99,7 +98,7 @@ const ArrangeClothes = () => {
   };
 
   const removeCloth = () => {
-    form.setValue('clothes', form.getValues('clothes').slice(0, -1));
+    form.setValue("clothes", form.getValues("clothes").slice(0, -1));
     setCloth(cloth - 1);
   };
 
@@ -113,9 +112,9 @@ const ArrangeClothes = () => {
     //   error: 'Failed to create a new note.',
     // });
 
-    toast.success('Berhasil');
+    toast.success("Berhasil");
     console.log(data);
-    console.log('click');
+    console.log("click");
   }
   return (
     <Card>
@@ -132,7 +131,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="title"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Judul Campaign</FormLabel>
                       <br />
@@ -154,7 +153,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="duration"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Durasi Campaign</FormLabel>
                       <br />
@@ -188,7 +187,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="desc"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Deskripsi </FormLabel>
                       <br />
@@ -201,7 +200,7 @@ const ArrangeClothes = () => {
                       </FormControl>
                       <FormDescription>
                         Dengan membuat deskripsi yang lengkap, kamu akan
-                        berkesempatan mendapatkan donasi yang lebih banyak.
+                        berkesempatan mendapatkan sumbang yang lebih banyak.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -212,7 +211,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="name"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nama Penerima</FormLabel>
                       <br />
@@ -231,7 +230,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="address"
-                  render={({field}) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Alamat Pengiriman</FormLabel>
                       <br />
@@ -260,7 +259,7 @@ const ArrangeClothes = () => {
                   Kamu bisa request pakaian apa saja yang di butuhkan.
                 </FormDescription>
               </div>
-              {Array.from({length: cloth}).map((_, index) => (
+              {Array.from({ length: cloth }).map((_, index) => (
                 <div
                   className="grid grid-cols-4 gap-x-5 gap-y-2 col-span-3 mb-2"
                   key={index}
@@ -269,9 +268,9 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.category`}
-                      render={({field}) => (
+                      render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Kategori Baju</FormLabel>
+                          <FormLabel>Kategori Pakaian</FormLabel>
                           <br />
                           <Select
                             onValueChange={field.onChange}
@@ -279,7 +278,7 @@ const ArrangeClothes = () => {
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Pilih Kategori Baju" />
+                                <SelectValue placeholder="Pilih Kategori Pakaian" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -292,7 +291,7 @@ const ArrangeClothes = () => {
                             </SelectContent>
                           </Select>
                           <FormDescription>
-                            Pilih kategori baju yang sesuai.
+                            Pilih kategori pakaian yang sesuai.
                           </FormDescription>
                           <FormMessage />
                         </FormItem>
@@ -303,7 +302,7 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.gender`}
-                      render={({field}) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Gender</FormLabel>
                           <br />
@@ -337,7 +336,7 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.size`}
-                      render={({field}) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Ukuran</FormLabel>
                           <br />
@@ -372,7 +371,7 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.quantity`}
-                      render={({field}) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Quantity</FormLabel>
                           <br />
@@ -382,6 +381,12 @@ const ArrangeClothes = () => {
                               type="number"
                               min={1}
                               inputMode="numeric"
+                              pattern="[0-9]*"
+                              onKeyPress={(e) => {
+                                if (!/[0-9]/.test(e.key)) {
+                                  e.preventDefault();
+                                }
+                              }}
                               {...field}
                             />
                           </FormControl>
@@ -398,7 +403,7 @@ const ArrangeClothes = () => {
 
               {cloth >= 1 && (
                 <Button
-                  variant={'destructive'}
+                  variant={"destructive"}
                   className="col-span-3"
                   onClick={() => removeCloth()}
                   type="button"
@@ -408,7 +413,7 @@ const ArrangeClothes = () => {
               )}
 
               <Button
-                variant={'outline'}
+                variant={"outline"}
                 className="col-span-3"
                 onClick={() => addCloth()}
                 type="button"

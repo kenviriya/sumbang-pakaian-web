@@ -40,6 +40,7 @@ const getUserClothDonation = query({
       size: data?.userCloth.size,
       type: data?.userCloth.type,
       status: data?.findClothStatus,
+      description: data?.userCloth.description,
       userId: data?.userCloth.userId,
       uploadTime: data?.userCloth._creationTime,
     }));
@@ -106,6 +107,7 @@ const createUserCloth = mutation({
     clothName: v.string(),
     clothSize: v.string(),
     clothType: v.string(),
+    clothDescription: v.string(),
     clothStatus: v.string(),
   },
   handler: async (ctx, args) => {
@@ -132,6 +134,7 @@ const createUserCloth = mutation({
       name: args.clothName,
       size: args.clothSize,
       type: args.clothType,
+      description: args.clothDescription,
       status: args.clothStatus as Id<"user_cloth_status">,
       userId,
     });

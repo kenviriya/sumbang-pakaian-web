@@ -1,80 +1,47 @@
-import Heading from './_components/heading';
-import DonationCard from './_components/donationCard';
+"use client";
+
+import Heading from "./_components/heading";
+import ItemCard from "./_components/donationCard";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import { useConvexAuth } from "convex/react";
+import { Spinner } from "@/components/spinner";
+import { useState } from "react";
 
 const HomePage = () => {
-  const items = [
-    {
-      donationId: '1',
-      imageUrl: '/carousel-1.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro vero perspiciatis aut eius. Tempore ex iusto voluptatibus architecto earum velit quisquam ab ducimus repellendus, provident quae magnam illo. At architecto amet sapiente obcaecati nulla enim vel repellat sit iste nihil nesciunt necessitatibus, molestiae provident, ab rem, mollitia consequatur expedita excepturi incidunt. Nemo a voluptatum fugiat est qui ipsam doloribus eius expedita modi asperiores quasi at cumque maiores aperiam ut, corrupti laboriosam tempora accusantium nihil veniam, saepe harum. Sequi nulla, quae, rerum labore beatae aliquam iusto placeat explicabo minima reprehenderit minus. Harum quasi dolor, similique magni ut cum! Consequatur, nemo quia.',
-    },
-    {
-      donationId: '2',
-      imageUrl: '/carousel-2.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        '  Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque accusamus aliquid facilis illo quidem itaque blanditiis error maiores necessitatibus exercitationem dolores, ex magnam excepturi fuga minima repudiandae? Itaque minus necessitatibus porro consequuntur, corrupti tempora nemo possimus harum. Nostrum neque odit animi dolores ea repellat, minus similique, laudantium quasi, architecto ullam molestiae eaque eveniet omnis dolorum voluptates beatae temporibus quas debitis! Hic possimus vitae, iure a dicta, ut molestias ipsum non consequuntur at dolores alias qui. Est provident blanditiis perferendis nisi dicta debitis dolorum praesentium expedita perspiciatis rerum vel cum fuga doloremque non aliquam, ea, voluptatibus nobis. Aliquid id porro neque.',
-    },
-    {
-      donationId: '3',
-      imageUrl: '/carousel-3.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, labore!',
-    },
-    {
-      donationId: '4',
-      imageUrl: '/carousel-1.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, labore!',
-    },
-    {
-      donationId: '5',
-      imageUrl: '/carousel-1.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, labore!',
-    },
-    {
-      donationId: '6',
-      imageUrl: '/carousel-2.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, labore!',
-    },
-    {
-      donationId: '7',
-      imageUrl: '/carousel-3.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, labore!',
-    },
-    {
-      donationId: '8',
-      imageUrl: '/carousel-1.jpg',
-      title: 'Lorem ipsum dolor sit amet.',
-      description:
-        'Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, labore!',
-    },
-  ];
+  const { isLoading } = useConvexAuth();
+  const [donationData, setDonationData] = useState([]);
+  try {
+    const fetchData = useQuery(api.donationRequests.getAllRequestDonation);
+    console.log(fetchData);
+  } catch (e) {
+    console.error(e);
+  }
+
   return (
     <div className="h-full w-full">
       <Heading />
-      <div className="px-[10%] mt-5 bg-[#f8f7f4] w-[90%] mx-auto">
-        <div className="grid grid-cols-1 xl:grid-cols-4 2xl:grid-cols-5 xl:gap-y-5 auto-rows-[380px] auto-cols-[250px]">
-          {items.map((item) => (
-            <div key={item.donationId} className="flex flex-col items-center">
-              <DonationCard
-                imageUrl={item.imageUrl}
-                title={item.title}
-                description={item.description}
-                donationId={item.donationId}
-              />
-            </div>
-          ))}
+      <div className="px-[10%] mt-5 bg-[#f8f7f4]">
+        <div className="flex flex-row flex-wrap gap-5 justify-center">
+          {isLoading && <Spinner />}
+          {donationData?.length === 0 && (
+            <h2 className="text-muted-foreground">
+              Belum ada yang request donasi :)
+            </h2>
+          )}
+          {!isLoading && (
+            <>
+              {donationData?.map((item) => (
+                <ItemCard
+                  key={""}
+                  imageUrl={""}
+                  title={""}
+                  description={""}
+                  donationId={""}
+                />
+              ))}
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -52,9 +52,10 @@ export default defineSchema({
     name: v.string(),
     size: v.string(),
     type: v.string(),
+    description: v.string(),
     category: v.id("ref_cloth_category"),
     status: v.id("user_cloth_status"),
-  })
+  })  
     .index("userId", ["userId"])
     .index("category", ["category"])
     .index("type", ["type"])

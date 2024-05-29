@@ -8,6 +8,7 @@ const createCloth = mutation({
     clothSize: v.string(),
     clothType: v.string(),
     clothImage: v.string(),
+    clothDescription: v.string(),
     clothCategory: v.id("ref_cloth_category"),
     clothStatus: v.id("user_cloth_status"),
   },
@@ -27,6 +28,7 @@ const createCloth = mutation({
       size: args.clothSize,
       status: args.clothStatus,
       type: args.clothType,
+      description: args.clothDescription,
       userId,
     });
 

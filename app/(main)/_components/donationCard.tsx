@@ -15,6 +15,7 @@ import {useRouter} from 'next/navigation';
 import {useConvexAuth} from 'convex/react';
 import {SignInButton} from '@clerk/clerk-react';
 import {Skeleton} from '@/components/ui/skeleton';
+import {AspectRatio} from '@/components/ui/aspect-ratio';
 
 interface IDonationCardProps {
   imageUrl: string;
@@ -41,15 +42,18 @@ const DonationCard = ({
   };
 
   return (
-    <Card className="w-[250px] h-[380px]">
+    <Card className="w-[250px] h-[400px]">
       <CardContent className="p-0">
-        <Image
-          src={imageUrl}
-          alt={title}
-          width={250}
-          height={300}
-          className="rounded-t-lg"
-        />
+        <AspectRatio ratio={4 / 3}>
+          <Image
+            quality={100}
+            src={imageUrl}
+            alt={title}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-t-lg"
+          />
+        </AspectRatio>
       </CardContent>
       <div className="flex flex-col justify-between h-[150px]">
         <CardHeader>
@@ -63,7 +67,7 @@ const DonationCard = ({
           <Button
             className="w-full"
             onClick={() => {
-              router.push(`/card/${donationId}`);
+              router.push(`/donation-details/${donationId}`);
             }}
           >
             <Shirt className="mr-2 h-4 w-4" />

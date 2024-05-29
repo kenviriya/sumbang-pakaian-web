@@ -1,14 +1,22 @@
-import {useRouter} from 'next/navigation';
-import Image from 'next/image';
-import {Button} from '@/components/ui/button';
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 interface IHistoryCardProps {
   id: string;
   title: string;
+  description: string;
   imageUrl: string;
+  status: string;
 }
 
-const HistoryCard = ({id, title, imageUrl}: IHistoryCardProps) => {
+const HistoryCard = ({
+  id,
+  title,
+  imageUrl,
+  description,
+  status,
+}: IHistoryCardProps) => {
   const route = useRouter();
 
   return (
@@ -29,15 +37,19 @@ const HistoryCard = ({id, title, imageUrl}: IHistoryCardProps) => {
         </div>
         <div className="col-span-4">
           <h2 className="font-bold text-gray-800">{title}</h2>
-          <h2 className="font-medium text-gray-800">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed
-            perferendis voluptate qui iusto dignissimos consequuntur sapiente
-            fuga, temporibus delectus culpa.
-          </h2>
+          <h2 className="font-medium text-gray-800">{description}</h2>
           <br />
-          <h2 className="font-semibold text-gray-800">
-            Status: <span className="text-green-700 font-medium">Diterima</span>
-          </h2>
+          {status === "Accepted" && (
+            <h2 className="font-semibold text-gray-800">
+              Status:{" "}
+              <span className="text-green-700 font-medium">{status}</span>
+            </h2>
+          )}
+          {status === "Decline" && (
+            <h2 className="font-semibold text-gray-800">
+              Status: <span className="text-red-700 font-medium">{status}</span>
+            </h2>
+          )}
         </div>
       </div>
     </div>

@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import {useState} from 'react';
-import Navigation from './_components/navigation';
-import SumbangContent from './_components/sumbangNavContent';
+import { useState } from "react";
+import Navigation from "./_components/navigation";
+import SumbangContent from "./_components/clothNavContent";
 
 const Dashboard = () => {
   const [activeContent, setActiveContent] = useState(<SumbangContent />);
-  const [activeButton, setActiveButton] = useState('sumbang');
+  const [activeButton, setActiveButton] = useState("sumbang");
 
   return (
     <div className="grid grid-cols-5 gap-4">
@@ -19,7 +19,7 @@ const Dashboard = () => {
       </div>
       <div className="col-span-4">
         <div
-          className={`${activeButton !== 'user' && 'rounded-md border bg-card text-card-foreground shadow p-4'}`}
+          className={`${activeButton !== "user" && "rounded-md border bg-card text-card-foreground shadow p-4"}`}
         >
           {activeContent}
         </div>

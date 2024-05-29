@@ -16,12 +16,6 @@ const getAllRequestDonation = query({
     const clothRequest = await ctx.db.query("cloth_request").collect();
     const refCategory = await ctx.db.query("ref_cloth_category").collect();
 
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity) {
-      throw new Error("Not authenticated");
-    }
-
     const tableJoin = donation.map((donation) => {
       const relatedRequest = donationRequests.find(
         (request) => request._id === donation.donationRequest
