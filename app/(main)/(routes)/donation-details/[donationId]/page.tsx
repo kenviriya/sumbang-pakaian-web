@@ -15,11 +15,6 @@ import {
 import Image from "next/image";
 import { Shirt } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
@@ -58,16 +53,12 @@ const DonationDetailPage = () => {
               Beatae ab quidem, aut odio ullam, voluptatum rerum veniam illo
               modi temporibus maiores velit enim, eos earum! Nihil, veniam.
             </CardDescription>
-            <h3 className="font-semibold">Alamat Pengiriman</h3>
-            <CardDescription className="mb-2">
-              <Input
-                type="email"
-                placeholder="Email"
-                disabled
-                value={
-                  "Jl. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione"
-                }
-              />
+            <h3 className="font-semibold">Lokasi Penerima</h3>
+            <CardDescription className="mb-3">
+              <p>
+                Jl. Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                Ratione
+              </p>
             </CardDescription>
             <Separator className="my-2" />
             <h3 className="font-semibold mb-2">Baju yang di Request</h3>

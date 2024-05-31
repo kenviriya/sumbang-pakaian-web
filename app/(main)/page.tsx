@@ -5,39 +5,39 @@ import ItemCard from "./_components/donationCard";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { useConvexAuth } from "convex/react";
-import { Spinner } from "@/components/spinner";
-import { useState } from "react";
+
+// Disabling SSR for this component because it causes a mismatch between the server and client rendered content
+import dynamic from "next/dynamic";
+const CardSkeleton = dynamic(
+  () => import("@/app/(main)/_components/cardSkeleton"),
+  { ssr: false },
+);
 
 const HomePage = () => {
   const { isLoading } = useConvexAuth();
-  const [donationData, setDonationData] = useState([]);
-  try {
-    const fetchData = useQuery(api.donationRequests.getAllRequestDonation);
-    console.log(fetchData);
-  } catch (e) {
-    console.error(e);
-  }
+
+  const fetchData = useQuery(api.donationRequests.getAllRequestDonation);
 
   return (
     <div className="h-full w-full">
       <Heading />
       <div className="px-[10%] mt-5 bg-[#f8f7f4]">
         <div className="flex flex-row flex-wrap gap-5 justify-center">
-          {isLoading && <Spinner />}
-          {donationData?.length === 0 && (
+          {isLoading && <CardSkeleton quantity={4} />}
+          {!isLoading && fetchData?.length === 0 && (
             <h2 className="text-muted-foreground">
-              Belum ada yang request donasi :)
+              Belum ada yang request pakaian :)
             </h2>
           )}
           {!isLoading && (
             <>
-              {donationData?.map((item) => (
+              {fetchData?.map((item) => (
                 <ItemCard
-                  key={""}
-                  imageUrl={""}
-                  title={""}
-                  description={""}
-                  donationId={""}
+                  key={item.donationId}
+                  imageUrl={item?.image || ""}
+                  title={item?.title || ""}
+                  description={item?.description || ""}
+                  donationId={item.donationId}
                 />
               ))}
             </>
