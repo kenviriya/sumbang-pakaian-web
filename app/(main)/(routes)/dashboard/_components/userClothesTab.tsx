@@ -12,15 +12,10 @@ const UserClothes = () => {
   const router = useRouter();
   const {isLoading} = useConvexAuth();
   const {user} = useUser();
-  const requestData = useQuery(api.userDonation.getUserClothDonation);
-  const sortedData = requestData
-    ?.slice()
-    .sort(
-      (a, b) =>
-        new Date(b.uploadTime).getTime() - new Date(a.uploadTime).getTime()
-    )
-    .filter((data) => data?.userId === user?.id)
-    .filter((data) => data?.status === 'PENDING');
+  const requestData = useQuery(
+    api.controllers.cloth_controller.getUserClothes,
+    {}
+  );
 
   return (
     <div>
@@ -37,20 +32,20 @@ const UserClothes = () => {
 
       <Separator />
       <div className="grid grid-cols-4 gap-4 mt-4">
-        {sortedData?.length === 0 && (
+        {requestData?.length === 0 && (
           <h2 className="text-muted-foreground col-span-4">
             Belum ada pakaian yang di upload.
           </h2>
         )}
         {isLoading && <Spinner />}
         <div>
-          {!isLoading && sortedData?.length !== 0 && (
+          {!isLoading && requestData?.length !== 0 && (
             <>
-              {sortedData?.map((item) => (
+              {requestData?.map((item) => (
                 <CardCloth
-                  key={item?.clothId ?? ''}
-                  clothId={item?.clothId ?? ''}
-                  imageUrl={item?.image ?? ''}
+                  key={item?._id ?? ''}
+                  clothId={item?._id ?? ''}
+                  imageUrl={item?.imageUrl ?? ''}
                   title={item?.name ?? ''}
                 />
               ))}
