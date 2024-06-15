@@ -5,7 +5,7 @@ import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
 import { useUser } from "@clerk/clerk-react";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const ArrangeClothLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const user = useUser();
   const userRole = user.user?.organizationMemberships[0]?.role;
@@ -23,10 +23,10 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="min-h-[75vh] bg-[#f8f7f4] px-[10%]">
+    <div className="min-h-[75vh] bg-[#f8f7f4] px-[20%]">
       <main className="h-full">{children}</main>
     </div>
   );
 };
 
-export default DashboardLayout;
+export default ArrangeClothLayout;

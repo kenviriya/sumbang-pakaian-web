@@ -17,12 +17,11 @@ import { useEdgeStore } from "@/lib/edgestore";
 import { FormLabel } from "@/components/ui/form";
 
 interface IImageDropzoneCard {
-  title?: string;
   file: File | undefined;
   setFile: React.Dispatch<File | undefined>;
 }
 
-const ImageDropzoneCard = ({ title, file, setFile }: IImageDropzoneCard) => {
+const ImageDropzoneCard = ({ file, setFile }: IImageDropzoneCard) => {
   const { edgestore } = useEdgeStore();
   const onChange = async (file?: File) => {
     if (file) {
@@ -33,9 +32,7 @@ const ImageDropzoneCard = ({ title, file, setFile }: IImageDropzoneCard) => {
   return (
     <>
       <Card className="h-[400px] w-[300px]">
-        <CardHeader>
-          <FormLabel>{title}</FormLabel>
-        </CardHeader>
+        <CardHeader></CardHeader>
         <CardContent className="h-[280px]">
           <SingleImageDropzone onChange={onChange} value={file} height={250} />
         </CardContent>

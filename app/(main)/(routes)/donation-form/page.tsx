@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -30,12 +30,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { CirclePlus, MinusCircle, SendHorizonal } from "lucide-react";
+import { CirclePlus, Loader2, MinusCircle, SendHorizonal } from "lucide-react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import * as React from "react";
 
 const FormSchema = z.object({
-  title: z.string(),
+  donationId: z.string(),
   clothes: z.array(
     z.object({
       category: z.string(),
@@ -50,14 +56,33 @@ const FormSchema = z.object({
 
 const DonationFormPage = () => {
   const [cloth, setCloth] = useState(1);
+  const [clothCategories, setClothCategories] = useState<string[]>([]);
+  const [deadline, setDeadline] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
+  const router = useRouter();
   const searchParams = useSearchParams();
   const donationId = searchParams.get("donationId");
+
+  const getDonation = useQuery(
+    api.controllers.donation_controller.getDonationById,
+    {
+      donationId: donationId as Id<"donation">,
+    },
+  );
+
+  useEffect(() => {
+    const deadlineDate = new Date();
+    deadlineDate.setDate(deadlineDate.getDate() + 7);
+
+    const formattedDeadline = format(deadlineDate, "MM/dd/yyyy, HH:mm:ss");
+    setDeadline(formattedDeadline);
+  }, []);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      title: donationId ? donationId : "Donation Title",
+      donationId: donationId?.toString() || "",
     },
   });
 
@@ -70,7 +95,61 @@ const DonationFormPage = () => {
     cloth !== 1 && setCloth(cloth - 1);
   };
 
-  const onSubmit = (data: z.infer<typeof FormSchema>) => {};
+  const insertDonationForm = useMutation(
+    api.controllers.donation_form_controller.createDonationForm,
+  );
+
+  const getClothCategory = useQuery(
+    api.controllers.ref_controller.refClothCategory.getAllCategory,
+  );
+
+  useEffect(() => {
+    if (getClothCategory) {
+      setClothCategories(getClothCategory.map((category) => category.name));
+    }
+  }, [getClothCategory]);
+
+  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
+    setIsLoading(true);
+
+    let clothes: {
+      categoryId: Id<"ref_cloth_category">;
+      gender: string;
+      size: string;
+      quantity: number;
+    }[] = [];
+
+    if (data.clothes && cloth) {
+      clothes = data.clothes.map((cloth) => {
+        const getCategoryId = getClothCategory?.find(
+          (category) => category.name === cloth.category,
+        );
+        return {
+          categoryId: getCategoryId?.id as Id<"ref_cloth_category">,
+          gender: cloth.gender,
+          size: cloth.size,
+          quantity: Number(cloth.quantity),
+        };
+      });
+    }
+
+    try {
+      const createRequest = insertDonationForm({
+        donationId: data.donationId as Id<"donation">,
+        deadlineDate: deadline,
+        clothRequest: clothes,
+      }).then(() => {
+        router.push("/");
+      });
+      toast.promise(createRequest, {
+        loading: "Sedang mengirim permintaan...",
+        success: "Permintaan berhasil dikirim!",
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Permintaan gagal dikirim!");
+    }
+  };
 
   return (
     <>
@@ -83,24 +162,15 @@ const DonationFormPage = () => {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <CardContent className="min-h-[55vh]">
-              <FormField
-                disabled={true}
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Judul Campaign</FormLabel>
-                    <br />
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      Judul campaign yang akan di donasikan
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="mb-2">
+                <FormLabel>Judul Campaign</FormLabel>
+                <div className="border-2 border-gray-200 p-2 rounded-md">
+                  {getDonation?.title}
+                </div>
+                <FormDescription>
+                  Judul campaign yang akan kamu sumbang.
+                </FormDescription>
+              </div>
               {Array.from({ length: cloth }).map((_, index) => (
                 <div
                   className="grid grid-cols-4 gap-x-5 gap-y-2 col-span-3 mb-2"
@@ -126,9 +196,12 @@ const DonationFormPage = () => {
                             <SelectContent>
                               <SelectGroup>
                                 <SelectLabel>Kategori</SelectLabel>
-                                <SelectItem value="30">Baju Tidur</SelectItem>
-                                <SelectItem value="60">Kemeja</SelectItem>
-                                <SelectItem value="90">Celana</SelectItem>
+                                {clothCategories.map((value, index) => (
+                                  <SelectItem key={index} value={value}>
+                                    {value.charAt(0).toUpperCase() +
+                                      value.slice(1).toLowerCase()}
+                                  </SelectItem>
+                                ))}
                               </SelectGroup>
                             </SelectContent>
                           </Select>
@@ -242,7 +315,6 @@ const DonationFormPage = () => {
                   </div>
                 </div>
               ))}
-
               {cloth > 1 && (
                 <Button
                   variant={"destructive"}
@@ -253,7 +325,6 @@ const DonationFormPage = () => {
                   Hapus Pakaian <MinusCircle className="ml-2 h-4 w-4" />
                 </Button>
               )}
-
               <Button
                 variant={"outline"}
                 onClick={() => addCloth()}
@@ -262,11 +333,21 @@ const DonationFormPage = () => {
                 Tambah Pakaian <CirclePlus className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>
-            <CardFooter>
-              <Button type="submit">
-                Kirim Request <SendHorizonal className="ml-2 h-4 w-4" />
-              </Button>
-            </CardFooter>
+            {isLoading && (
+              <CardFooter>
+                <Button disabled>
+                  Mohon tunggu...
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                </Button>
+              </CardFooter>
+            )}
+            {!isLoading && (
+              <CardFooter>
+                <Button type="submit">
+                  Kirim Request <SendHorizonal className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            )}
           </form>
         </Form>
       </Card>

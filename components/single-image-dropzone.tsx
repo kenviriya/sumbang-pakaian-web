@@ -144,15 +144,15 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
 
           {imageUrl ? (
             // Image Preview
-            <AspectRatio ratio={4 / 3}>
+            <>
               <Image
                 className="h-full w-full rounded-md object-cover"
-                width={300}
-                height={400}
+                layout="fill"
+                objectFit={"cover"}
                 src={imageUrl}
                 alt={acceptedFiles[0]?.name}
               />
-            </AspectRatio>
+            </>
           ) : (
             // Upload Icon
             <div className="flex flex-col items-center justify-center text-xs text-gray-400">

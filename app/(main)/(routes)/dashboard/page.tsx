@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Navigation from "./_components/navigation";
-import SumbangContent from "./_components/clothNavContent";
+import DashboardNavigation from "./_components/dashboardNavigation";
+import SumbangContent from "./_components/(user-clothes)/clothNavContent";
 
 const Dashboard = () => {
   const [activeContent, setActiveContent] = useState(<SumbangContent />);
@@ -11,7 +11,7 @@ const Dashboard = () => {
   return (
     <div className="grid grid-cols-5 gap-4">
       <div className="col-span-1">
-        <Navigation
+        <DashboardNavigation
           activeButton={activeButton}
           setActiveButton={setActiveButton}
           setActiveContent={setActiveContent}

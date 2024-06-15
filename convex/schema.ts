@@ -1,103 +1,138 @@
-import { defineSchema, defineTable } from "convex/server";
-import { v } from "convex/values";
+import {defineSchema, defineTable} from 'convex/server';
+import {v} from 'convex/values';
 
 export default defineSchema({
-  points: defineTable({
-    userId: v.string(),
-    points: v.number(),
-    clothCount: v.number(),
-  }).index("userId", ["userId"]),
-  donation: defineTable({
-    donationRequest: v.id("donation_request"),
-    status: v.id("ref_donation_status"),
-  }).index("donationRequest", ["donationRequest"]),
-  ref_donation_status: defineTable({
-    status: v.string(),
-  }),
-  user_contribution: defineTable({
-    userId: v.string(),
-    contributionQuantity: v.number(),
-  }).index("userId", ["userId"]),
-  map_donation_contribution: defineTable({
-    donationContriboutionId: v.id("user_contribution"),
-    donationId: v.id("donation"),
-  }),
+  // Donation Request
   donation_request: defineTable({
     userId: v.string(),
-    image: v.string(),
+    imageUrl: v.optional(v.string()),
     title: v.string(),
+    duration: v.number(),
     description: v.string(),
-    status: v.id("ref_request_status"),
+    address: v.string(),
+    statusId: v.id('ref_donation_request_status'),
+  })
+    .index('by_user', ['userId'])
+    .index('by_duration', ['duration'])
+    .index('by_status', ['statusId']),
+
+  map_donation_request_details: defineTable({
+    donationRequestId: v.id('donation_request'),
+    clothRequestId: v.id('cloth_request'),
+  }),
+
+  cloth_request: defineTable({
+    size: v.string(),
+    gender: v.string(),
+    quantity: v.number(),
+    categoryId: v.id('ref_cloth_category'),
+  }),
+  // End of Donation Request
+
+  // Donation
+  donation: defineTable({
+    donationRequestId: v.id('donation_request'),
+    statusId: v.id('ref_donation_status'),
     startDate: v.string(),
     endDate: v.string(),
-    address: v.string(),
-  }).index("userId", ["userId"]),
-  ref_request_status: defineTable({
-    status: v.string(),
+  }).index('by_status', ['statusId']),
+
+  donation_contributor: defineTable({
+    donationId: v.id('donation'),
+    userId: v.string(),
   }),
-  map_request_details: defineTable({
-    donationRequestId: v.id("donation_request"),
-    clothId: v.id("cloth_request"),
-  }),
-  cloth_request: defineTable({
-    name: v.string(),
-    size: v.string(),
-    type: v.string(),
-    quantity: v.number(),
-    category: v.id("ref_cloth_category"),
-  }),
+  // End of Donation
+
+  // User Cloth
   user_cloth: defineTable({
     userId: v.string(),
-    image: v.string(),
+    imageUrl: v.optional(v.string()),
     name: v.string(),
     size: v.string(),
-    type: v.string(),
+    gender: v.string(),
     description: v.string(),
-    category: v.id("ref_cloth_category"),
-    status: v.id("user_cloth_status"),
-  })  
-    .index("userId", ["userId"])
-    .index("category", ["category"])
-    .index("type", ["type"])
-    .index("size", ["size"]),
-  ref_cloth_category: defineTable({
-    name: v.string(),
+    categoryId: v.id('ref_cloth_category'),
+    statusId: v.id('ref_user_cloth_status'),
+  }),
+  // End of User Cloth
+
+  // User Donation
+  user_contribution: defineTable({
+    userId: v.string(),
+    donationId: v.id('donation'),
+    clothId: v.id('user_cloth'),
+    contributionQuantity: v.number(),
+  }).index('by_donation', ['donationId']),
+  // End of User Donation
+
+  // Donation Form for user donation
+  donation_form: defineTable({
+    userId: v.string(),
+    donationId: v.id('donation'),
+    deadlineDate: v.string(),
+    statusId: v.id('ref_donation_form_status'),
   }),
 
-  user_cloth_status: defineTable({
-    status: v.string(),
+  map_donation_form_details: defineTable({
+    donationFormId: v.id('donation_form'),
+    donationFormDetailId: v.id('donation_form_detail'),
   }),
 
+  donation_form_detail: defineTable({
+    size: v.string(),
+    gender: v.string(),
+    quantity: v.number(),
+    categoryId: v.id('ref_cloth_category'),
+  }).index('categoryId', ['categoryId']),
+  // Donation Form
+
+  // Notification
   notification: defineTable({
     userId: v.string(),
     title: v.string(),
     description: v.string(),
-    status: v.boolean(),
-  }).index("userId", ["userId"]),
+    statusId: v.id('ref_notification_status'),
+  }).index('by_status', ['statusId']),
+  // End of Notification
+
+  // User Points
+  points: defineTable({
+    userId: v.string(),
+    points: v.number(),
+    clothCount: v.number(),
+  }).index('userId', ['userId']),
+  // End of User Points
+
+  // Map Table
+  map_donation_contribution: defineTable({
+    userContributionId: v.string(),
+    donationId: v.id('donation'),
+  }),
+  // End of Map Table
+
+  // Ref Tables
+  ref_donation_request_status: defineTable({
+    status: v.string(),
+  }).index('status', ['status']),
+
+  ref_donation_form_status: defineTable({
+    status: v.string(),
+  }).index('status', ['status']),
+
+  ref_donation_status: defineTable({
+    status: v.string(),
+  }).index('status', ['status']),
+
+  ref_cloth_category: defineTable({
+    name: v.string(),
+  }).index('name', ['name']),
 
   ref_notification_status: defineTable({
     status: v.string(),
-  }),
+  }).index('status', ['status']),
 
-  ref_donation_contributor_status: defineTable({
+  ref_user_cloth_status: defineTable({
     status: v.string(),
-  }),
-
-  donation_form_detail: defineTable({
-    category: v.id("ref_cloth_category"),
-    quantity: v.number(),
-  }).index("category", ["category"]),
-
-  donation_form: defineTable({
-    donationFormDetailId: v.id("donation_form_detail"),
-    donationContributorStatus: v.id("ref_donation_contributor_status"),
-    donation: v.id("donation"),
-    userId: v.string(),
-    deadlineDate: v.string(),
-  }).index("userId", ["userId"]),
-
-  donation_contributor: defineTable({
-    donation: v.id("donation"),
-    userId: v.string(),
-  }).index("userId", ["userId"]),
+  }).index('status', ['status']),
+  // End of Ref Tables
 });

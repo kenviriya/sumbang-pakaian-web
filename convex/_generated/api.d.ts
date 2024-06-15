@@ -14,9 +14,15 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
-import type * as cloth from "../cloth.js";
-import type * as donationRequests from "../donationRequests.js";
-import type * as userDonation from "../userDonation.js";
+import type * as controllers_cloth_controller from "../controllers/cloth_controller.js";
+import type * as controllers_donation_controller from "../controllers/donation_controller.js";
+import type * as controllers_donation_form_controller from "../controllers/donation_form_controller.js";
+import type * as controllers_donation_request_controller from "../controllers/donation_request_controller.js";
+import type * as controllers_ref_controller_refClothCategory from "../controllers/ref_controller/refClothCategory.js";
+import type * as controllers_ref_controller_refDonationRequestStatus from "../controllers/ref_controller/refDonationRequestStatus.js";
+import type * as controllers_ref_controller_refDonationStatus from "../controllers/ref_controller/refDonationStatus.js";
+import type * as controllers_ref_controller_refNotificationStatus from "../controllers/ref_controller/refNotificationStatus.js";
+import type * as controllers_ref_controller_refUserClothStatus from "../controllers/ref_controller/refUserClothStatus.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -27,9 +33,15 @@ import type * as userDonation from "../userDonation.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
-  cloth: typeof cloth;
-  donationRequests: typeof donationRequests;
-  userDonation: typeof userDonation;
+  "controllers/cloth_controller": typeof controllers_cloth_controller;
+  "controllers/donation_controller": typeof controllers_donation_controller;
+  "controllers/donation_form_controller": typeof controllers_donation_form_controller;
+  "controllers/donation_request_controller": typeof controllers_donation_request_controller;
+  "controllers/ref_controller/refClothCategory": typeof controllers_ref_controller_refClothCategory;
+  "controllers/ref_controller/refDonationRequestStatus": typeof controllers_ref_controller_refDonationRequestStatus;
+  "controllers/ref_controller/refDonationStatus": typeof controllers_ref_controller_refDonationStatus;
+  "controllers/ref_controller/refNotificationStatus": typeof controllers_ref_controller_refNotificationStatus;
+  "controllers/ref_controller/refUserClothStatus": typeof controllers_ref_controller_refUserClothStatus;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

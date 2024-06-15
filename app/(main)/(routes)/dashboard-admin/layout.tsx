@@ -5,7 +5,7 @@ import { useConvexAuth } from "convex/react";
 import { redirect } from "next/navigation";
 import { useUser } from "@clerk/clerk-react";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const DashboardAdminLayout = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const user = useUser();
   const userRole = user.user?.organizationMemberships[0]?.role;
@@ -18,7 +18,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!isAuthenticated || userRole === "org:admin") {
+  if (!isAuthenticated || userRole !== "org:admin") {
     return redirect("/");
   }
 
@@ -29,4 +29,4 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export default DashboardLayout;
+export default DashboardAdminLayout;

@@ -5,22 +5,18 @@ import { cn } from "@/lib/utils";
 import { useConvexAuth } from "convex/react";
 import { SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/spinner";
 
 import { LogIn } from "lucide-react";
 import Logo from "./logo";
 import Notification from "./notification";
 import Link from "next/link";
-import NavbarSkeleton from "@/app/(main)/_components/navbarSkeleton";
+import NavbarSkeleton from "@/app/(main)/_components/(skeleton)/navbarSkeleton";
 
 const Navbar = () => {
   const { isAuthenticated, isLoading } = useConvexAuth();
   const scrolled = useScrollTop();
   const user = useUser();
   const userRole = user.user?.organizationMemberships[0]?.role;
-  const userEmail = user.user?.emailAddresses[0]?.emailAddress;
-  // org:admin
-  // console.log('user role', userRole);
 
   return (
     <div
@@ -44,17 +40,21 @@ const Navbar = () => {
         )}
         {isAuthenticated && !isLoading && (
           <>
-            <Notification />
-            <Button className="mr-3" variant={"secondary"}>
-              <Link href={"/arrange-clothes"}>Galang Pakaian</Link>
-            </Button>
-            <Button className="mr-3">
-              <Link href={"/dashboard"}>Dashboard</Link>
-            </Button>
+            {userRole !== "org:admin" && (
+              <>
+                <Notification />
+                <Button className="mr-3" variant={"secondary"}>
+                  <Link href={"/donation-request-form"}>Galang Pakaian</Link>
+                </Button>
+                <Button className="mr-3">
+                  <Link href={"/dashboard"}>Dashboard</Link>
+                </Button>
+              </>
+            )}
             {userRole === "org:admin" && (
               <>
                 <Button className="mr-3">
-                  <Link href={"/admin-dashboard"}>Admin Dashboard</Link>
+                  <Link href={"/dashboard-admin"}>Dashboard Admin</Link>
                 </Button>
               </>
             )}

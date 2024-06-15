@@ -20,13 +20,10 @@ import ImageDropzoneCard from "@/components/image-dropzone-card";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
-import { toast } from "sonner";
 import { useState } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+
 import * as React from "react";
 import {
   Select,
