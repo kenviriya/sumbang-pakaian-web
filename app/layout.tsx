@@ -31,7 +31,6 @@ export default function RootLayout({
         <ConvexClientProvider>
           <EdgeStoreProvider>
             <Toaster position="bottom-right" />
-
             {children}
           </EdgeStoreProvider>
         </ConvexClientProvider>

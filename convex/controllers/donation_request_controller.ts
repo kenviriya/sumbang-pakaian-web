@@ -1,44 +1,51 @@
-import {mutation, query} from '@/convex/_generated/server';
-import {v} from 'convex/values';
+import { mutation, query } from "@/convex/_generated/server";
+import { v } from "convex/values";
 
 const getAllDonationRequest = query({
   args: {
     userId: v.optional(v.string()),
+    statusId: v.optional(v.id("ref_donation_request_status")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
-    let getDonationRequests = await ctx.db.query('donation_request').collect();
+    let getDonationRequests = await ctx.db.query("donation_request").collect();
 
     const getDonationRequestStatus = await ctx.db
-      .query('ref_donation_request_status')
+      .query("ref_donation_request_status")
       .collect();
 
     const getDonationRequestDetails = await ctx.db
-      .query('map_donation_request_details')
+      .query("map_donation_request_details")
       .collect();
 
-    const getClothRequest = await ctx.db.query('cloth_request').collect();
+    const getClothRequest = await ctx.db.query("cloth_request").collect();
 
-    const getClothCategory = await ctx.db.query('ref_cloth_category').collect();
+    const getClothCategory = await ctx.db.query("ref_cloth_category").collect();
 
     if (args.userId) {
       getDonationRequests = getDonationRequests.filter(
-        (donationRequests) => donationRequests.userId === args.userId
+        (donationRequests) => donationRequests.userId === args.userId,
+      );
+    }
+
+    if (args.statusId) {
+      getDonationRequests = getDonationRequests.filter(
+        (donationRequests) => donationRequests.statusId === args.statusId,
       );
     }
 
     const donationRequestStatusMap = new Map(
-      getDonationRequestStatus.map((status) => [status._id, status])
+      getDonationRequestStatus.map((status) => [status._id, status]),
     );
 
     return getDonationRequests.map((donationRequests) => {
       const requestStatus = donationRequestStatusMap.get(
-        donationRequests.statusId
+        donationRequests.statusId,
       );
 
       let requestTitle,
@@ -56,18 +63,18 @@ const getAllDonationRequest = query({
           address: requestAddress,
         } = donationRequests);
         const requestDetail = getDonationRequestDetails.filter(
-          (detail) => detail.donationRequestId === donationRequests._id
+          (detail) => detail.donationRequestId === donationRequests._id,
         );
         if (requestDetail.length) {
           const clothesIds = requestDetail.map(
-            (detail) => detail.clothRequestId
+            (detail) => detail.clothRequestId,
           );
           const clothes = getClothRequest.filter((cloth) =>
-            clothesIds.includes(cloth._id)
+            clothesIds.includes(cloth._id),
           );
           clothRequest = clothes.map((cloth) => {
             const category = getClothCategory.find(
-              (category) => category._id === cloth.categoryId
+              (category) => category._id === cloth.categoryId,
             );
             return {
               size: cloth.size,
@@ -95,44 +102,44 @@ const getAllDonationRequest = query({
 
 const getDonationRequestById = query({
   args: {
-    donationRequestId: v.id('donation_request'),
+    donationRequestId: v.id("donation_request"),
   },
   handler: async (ctx, args) => {
     const donationRequest = await ctx.db.get(args.donationRequestId);
 
     if (!donationRequest) {
       throw new Error(
-        `Donation Request with ${args.donationRequestId} not found`
+        `Donation Request with ${args.donationRequestId} not found`,
       );
     }
 
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const getRequestStatus = await ctx.db.get(donationRequest.statusId);
 
     const getRequestDetail = await ctx.db
-      .query('map_donation_request_details')
+      .query("map_donation_request_details")
       .collect();
 
     const mapDonationRequestDetails = getRequestDetail.filter(
-      (detail) => detail.donationRequestId === donationRequest._id
+      (detail) => detail.donationRequestId === donationRequest._id,
     );
 
-    const getClothRequest = await ctx.db.query('cloth_request').collect();
+    const getClothRequest = await ctx.db.query("cloth_request").collect();
 
-    const getClothCategory = await ctx.db.query('ref_cloth_category').collect();
+    const getClothCategory = await ctx.db.query("ref_cloth_category").collect();
 
     const clothRequest = mapDonationRequestDetails.map((detail) => {
       const clothes = getClothRequest.find(
-        (clothes) => clothes._id === detail.clothRequestId
+        (clothes) => clothes._id === detail.clothRequestId,
       );
       if (clothes) {
         const category = getClothCategory.find(
-          (category) => category._id === clothes.categoryId
+          (category) => category._id === clothes.categoryId,
         );
         return {
           size: clothes.size,
@@ -160,21 +167,21 @@ const getDonationRequestById = query({
 const getAllDonationRequestDetail = query({
   handler: async (ctx) => {
     const getRequestDetail = await ctx.db
-      .query('map_donation_request_details')
+      .query("map_donation_request_details")
       .collect();
   },
 });
 
 const createDonationRequestDetail = mutation({
   args: {
-    donationRequestId: v.id('donation_request'),
-    categoryId: v.id('ref_cloth_category'),
+    donationRequestId: v.id("donation_request"),
+    categoryId: v.id("ref_cloth_category"),
     gender: v.string(),
     size: v.string(),
     quantity: v.number(),
   },
   handler: async (ctx, args) => {
-    const insertClothRequest = await ctx.db.insert('cloth_request', {
+    const insertClothRequest = await ctx.db.insert("cloth_request", {
       categoryId: args.categoryId,
       gender: args.gender,
       size: args.size,
@@ -182,10 +189,10 @@ const createDonationRequestDetail = mutation({
     });
 
     if (!insertClothRequest) {
-      throw new Error('Failed to create cloth request');
+      throw new Error("Failed to create cloth request");
     }
 
-    return await ctx.db.insert('map_donation_request_details', {
+    return await ctx.db.insert("map_donation_request_details", {
       donationRequestId: args.donationRequestId,
       clothRequestId: insertClothRequest,
     });
@@ -203,30 +210,30 @@ const createDonationRequest = mutation({
     address: v.string(),
     clothRequest: v.array(
       v.object({
-        categoryId: v.id('ref_cloth_category'),
+        categoryId: v.id("ref_cloth_category"),
         gender: v.string(),
         size: v.string(),
         quantity: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
 
     const getDonationRequestStatusId = await ctx.db
-      .query('ref_donation_request_status')
-      .withIndex('status', (q) => q.eq('status', 'PENDING'))
+      .query("ref_donation_request_status")
+      .withIndex("status", (q) => q.eq("status", "PENDING"))
       .collect();
 
     const statusId = getDonationRequestStatusId[0]._id;
 
-    const createDonationRequest = await ctx.db.insert('donation_request', {
+    const createDonationRequest = await ctx.db.insert("donation_request", {
       imageUrl: args.imageUrl,
       title: args.title,
       duration: args.duration,
@@ -237,12 +244,12 @@ const createDonationRequest = mutation({
     });
 
     if (!createDonationRequest) {
-      throw new Error('Failed to create donation request');
+      throw new Error("Failed to create donation request");
     }
 
     if (args.clothRequest) {
       for (const clothRequest of args.clothRequest) {
-        const insertClothRequest = await ctx.db.insert('cloth_request', {
+        const insertClothRequest = await ctx.db.insert("cloth_request", {
           categoryId: clothRequest.categoryId,
           gender: clothRequest.gender,
           size: clothRequest.size,
@@ -250,10 +257,10 @@ const createDonationRequest = mutation({
         });
 
         if (!insertClothRequest) {
-          throw new Error('Failed to create cloth request');
+          throw new Error("Failed to create cloth request");
         }
 
-        await ctx.db.insert('map_donation_request_details', {
+        await ctx.db.insert("map_donation_request_details", {
           donationRequestId: createDonationRequest,
           clothRequestId: insertClothRequest,
         });
@@ -264,21 +271,31 @@ const createDonationRequest = mutation({
 
 const updateDonationRequestStatus = mutation({
   args: {
-    donationRequestId: v.id('donation_request'),
-    statusId: v.optional(v.id('ref_donation_request_status')),
+    donationRequestId: v.id("donation_request"),
+    statusId: v.id("ref_donation_request_status"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const donationRequest = await ctx.db.get(args.donationRequestId);
 
     if (!donationRequest) {
-      throw new Error('Donation Request not found');
+      throw new Error("Donation Request not found");
     }
+    //
+    // const getDonationStatusPending = await ctx.db
+    //   .query("ref_donation_request_status")
+    //   .withIndex("status", (q) => q.eq("status", "PENDING"))
+    //   .collect();
+    //
+    // const getDonationStatusApproved = await ctx.db
+    //   .query("ref_donation_request_status")
+    //   .withIndex("status", (q) => q.eq("status", "APPROVED"))
+    //   .collect();
 
     return await ctx.db.patch(args.donationRequestId, {
       statusId: args.statusId,

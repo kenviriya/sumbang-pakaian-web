@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/clerk-react";
-import { Shirt } from "lucide-react";
+import { Mail, Grip } from "lucide-react";
 import DashboardAdminNavigationButton from "./dashboardAdminNavigationButton";
 import React from "react";
 import ManageDonationContent from "@/app/(main)/(routes)/dashboard-admin/_components/(manage-donation)/manageDonationContent";
@@ -18,8 +18,6 @@ const DashboardAdminNavigation = ({
   setActiveButton,
   setActiveContent,
 }: INavigationProps) => {
-  const { user } = useUser();
-
   const contentCards = {
     donation: <ManageDonationContent />,
     request: <DonationRequestContent />,
@@ -29,21 +27,21 @@ const DashboardAdminNavigation = ({
   return (
     <div className="rounded-md border bg-card text-card-foreground shadow p-2">
       <DashboardAdminNavigationButton
-        icon={<Shirt className="h-5 w-5" />}
-        text="Manage Donation"
-        isActive={activeButton === "donation" && true}
-        onClick={() => {
-          setActiveButton("donation");
-          setActiveContent(contentCards.donation);
-        }}
-      />
-      <DashboardAdminNavigationButton
-        icon={<Shirt className="h-5 w-5" />}
-        text="Donation Request"
+        icon={<Mail className="h-5 w-5" />}
+        text="Galang Pakaian"
         isActive={activeButton === "request" && true}
         onClick={() => {
           setActiveButton("request");
           setActiveContent(contentCards.request);
+        }}
+      />
+      <DashboardAdminNavigationButton
+        icon={<Grip className="h-5 w-5" />}
+        text="Mengelola Donasi"
+        isActive={activeButton === "donation" && true}
+        onClick={() => {
+          setActiveButton("donation");
+          setActiveContent(contentCards.donation);
         }}
       />
     </div>

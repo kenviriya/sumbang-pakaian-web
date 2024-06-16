@@ -2,12 +2,13 @@
 
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useUser } from "@clerk/clerk-react";
-import { Shirt, Package2 } from "lucide-react";
+import { Shirt, Package2, HandHeart } from "lucide-react";
 import DashboardNavigationButton from "./dashboardNavigationButton";
 import React from "react";
 import UserContent from "./(user-profile)/userNavContent";
 import SumbangContent from "./(user-clothes)/clothNavContent";
 import DonasiContent from "./(user-donation)/donationNavContent";
+import ArrangeContent from "@/app/(main)/(routes)/dashboard/_components/(user-arrange)/arrangeNavContent";
 
 interface INavigationProps {
   activeButton: React.ReactNode;
@@ -26,6 +27,7 @@ const DashboardNavigation = ({
     user: <UserContent />,
     sumbang: <SumbangContent />,
     donasi: <DonasiContent />,
+    galang: <ArrangeContent />,
     // history: <HistoryContent />,
     // points: <PointsContent />,
   };
@@ -48,6 +50,15 @@ const DashboardNavigation = ({
         onClick={() => {
           setActiveButton("donasi");
           setActiveContent(contentCards.donasi);
+        }}
+      />
+      <DashboardNavigationButton
+        icon={<HandHeart className="h-5 w-5" />}
+        text={"Galang Dana"}
+        isActive={activeButton === "galang" && true}
+        onClick={() => {
+          setActiveButton("galang");
+          setActiveContent(contentCards.galang);
         }}
       />
       <DashboardNavigationButton

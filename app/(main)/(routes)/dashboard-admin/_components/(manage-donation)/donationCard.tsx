@@ -15,8 +15,6 @@ import { useRouter } from "next/navigation";
 import { useConvexAuth } from "convex/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 
 interface IDonationCardProps {
   imageUrl: string;
@@ -68,7 +66,7 @@ const DonationCard = ({
           <Button
             className="w-full"
             onClick={() => {
-              router.push(`/donation-details/${donationId}`);
+              router.push(`/dashboard-admin/donation-detail/${donationId}`);
             }}
           >
             <Shirt className="mr-2 h-4 w-4" />
