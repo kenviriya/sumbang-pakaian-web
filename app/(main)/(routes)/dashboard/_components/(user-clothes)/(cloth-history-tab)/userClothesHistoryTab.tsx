@@ -1,17 +1,16 @@
-import {Separator} from '@/components/ui/separator';
-import HistoryCard from './historyCard';
-import {api} from '@/convex/_generated/api';
-import {useQuery} from 'convex/react';
-import {useConvexAuth} from 'convex/react';
-import {Spinner} from '@/components/spinner';
-import {useUser} from '@clerk/clerk-react';
+import { Separator } from "@/components/ui/separator";
+import HistoryCard from "./historyCard";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import { useConvexAuth } from "convex/react";
+import { Spinner } from "@/components/spinner";
+import { useUser } from "@clerk/clerk-react";
 
 const UserClothesHistory = () => {
-  const {isLoading} = useConvexAuth();
-  const {user} = useUser();
+  const { isLoading } = useConvexAuth();
   const requestData = useQuery(
     api.controllers.cloth_controller.getUserClothes,
-    {}
+    {},
   );
 
   return (
@@ -29,7 +28,7 @@ const UserClothesHistory = () => {
                   id={item?._id}
                   title={item?.name}
                   description={item?.description}
-                  status={item?.status ?? 'Undefined'}
+                  status={item?.status ?? "Undefined"}
                 />
                 <Separator className="mt-2" />
               </div>
