@@ -46,7 +46,6 @@ export default defineSchema({
   // User Cloth
   user_cloth: defineTable({
     userId: v.string(),
-    imageUrl: v.optional(v.string()),
     name: v.string(),
     size: v.string(),
     gender: v.string(),
@@ -59,10 +58,22 @@ export default defineSchema({
   // User Donation
   user_contribution: defineTable({
     userId: v.string(),
-    donationId: v.id('donation'),
-    clothId: v.id('user_cloth'),
-    contributionQuantity: v.number(),
-  }).index('by_donation', ['donationId']),
+    donationFormId: v.id('donation_form'),
+  })
+    .index('by_donation_form', ['donationFormId'])
+    .index('by_user', ['userId']),
+
+  map_user_contribution_details: defineTable({
+    userContributionId: v.id('user_contribution'),
+    userContributionDetailId: v.id('user_contribution_detail'),
+  }).index('by_user_contribution', ['userContributionId']),
+
+  user_contribution_detail: defineTable({
+    size: v.string(),
+    gender: v.string(),
+    quantity: v.number(),
+    categoryId: v.id('ref_cloth_category'),
+  }).index('by_category', ['categoryId']),
   // End of User Donation
 
   // Donation Form for user donation
@@ -70,8 +81,12 @@ export default defineSchema({
     userId: v.string(),
     donationId: v.id('donation'),
     deadlineDate: v.string(),
+    receipt: v.optional(v.string()),
     statusId: v.id('ref_donation_form_status'),
-  }),
+  })
+    .index('by_status', ['statusId'])
+    .index('by_user', ['userId'])
+    .index('by_donation', ['donationId']),
 
   map_donation_form_details: defineTable({
     donationFormId: v.id('donation_form'),

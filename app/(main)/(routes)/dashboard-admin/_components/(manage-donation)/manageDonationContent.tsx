@@ -34,12 +34,12 @@ const ManageDonationContent = () => {
         }
       >
         {getDonations?.map((donation) => (
-          <div key={donation.donationId}>
+          <div key={donation?.id}>
             <DonationCard
               imageUrl={donation?.imageUrl || "/No image"}
-              title={donation?.title || "No title"}
-              description={donation?.description || "No description"}
-              donationId={donation.donationId}
+              title={donation?.donationTitle || "No title"}
+              description={donation?.donationDescription || "No description"}
+              donationId={donation?.id || "No id"}
             />
           </div>
         ))}

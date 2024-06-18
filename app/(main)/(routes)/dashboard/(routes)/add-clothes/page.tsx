@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Card,
@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -15,16 +15,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import ImageDropzoneCard from "@/components/image-dropzone-card";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
-import { useState } from "react";
-import { useEdgeStore } from "@/lib/edgestore";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/form';
+import ImageDropzoneCard from '@/components/image-dropzone-card';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {SubmitHandler, useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {useEffect, useState} from 'react';
+import {useEdgeStore} from '@/lib/edgestore';
+import {Button} from '@/components/ui/button';
 
-import * as React from "react";
+import * as React from 'react';
 import {
   Select,
   SelectContent,
@@ -33,55 +33,55 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { SaveIcon } from "lucide-react";
+} from '@/components/ui/select';
+import {SaveIcon} from 'lucide-react';
+import {useMutation, useQuery} from 'convex/react';
+import {api} from '@/convex/_generated/api';
+import {Input} from '@/components/ui/input';
+import {Id} from '@/convex/_generated/dataModel';
 
 const FormSchema = z.object({
-  title: z.string().min(5, {
-    message: "Title must be at least 5 characters.",
-  }),
-  description: z.string(),
+  title: z.string(),
+  category: z.string(),
   gender: z.string(),
   size: z.string(),
-  category: z.string(),
-  image: z.string(),
 });
 
-type FormData = z.infer<typeof FormSchema>;
-
 const AddCloth = () => {
-  const [file, setFile] = useState<File | undefined>(undefined);
+  const [clothCategories, setClothCategories] = useState<string[]>([]);
 
-  // Initialize the form with useForm hook
-  const form = useForm<FormData>({
+  const getClothCategory = useQuery(
+    api.controllers.ref_controller.refClothCategory.getAllCategory
+  );
+
+  useEffect(() => {
+    if (getClothCategory) {
+      setClothCategories(getClothCategory.map((category) => category.name));
+    }
+  }, [getClothCategory]);
+
+  const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    mode: "onSubmit",
-    reValidateMode: "onChange",
-    defaultValues: {
-      title: "",
-      description: "",
-      size: "",
-      category: "",
-      image: "",
-    },
+    mode: 'onSubmit',
+    reValidateMode: 'onChange',
   });
 
-  const { edgestore } = useEdgeStore();
+  const insertUserCloth = useMutation(
+    api.controllers.cloth_controller.createUserCloth
+  );
 
-  // Function to handle image upload
-  const uploadImage = async (file: File | null) => {
-    if (file) {
-      const res = await edgestore.publicFiles.upload({ file });
-    }
-  };
+  const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
+    const getCategoryId = getClothCategory?.find(
+      (category) => category.name === data.category
+    );
 
-  // Function to handle form submission
-  const onSubmit: SubmitHandler<FormData> = async (data) => {
-    if (file) {
-      await uploadImage(file);
-    }
-    console.log(data);
-    console.log("submitting");
+    const createUserCloth = await insertUserCloth({
+      name: data.title,
+      categoryId: getCategoryId?.id as Id<'ref_cloth_category'>,
+      gender: data.gender,
+      size: data.size,
+      description: '',
+    });
   };
 
   return (
@@ -94,20 +94,23 @@ const AddCloth = () => {
           <CardContent className="min-h-[65vh]">
             <FormField
               control={form.control}
-              name="image"
-              render={({ field }) => (
+              name="title"
+              render={({field}) => (
                 <FormItem>
-                  <FormLabel>Upload Foto Baju Kamu</FormLabel>
-                  <div className={"mt-1 mb-2"}>
-                    <ImageDropzoneCard file={file} setFile={setFile} />
-                  </div>
+                  <FormLabel>Nama Pakaian</FormLabel>
+                  <br />
+                  <FormControl>
+                    <Input placeholder="Cth : Baju tidur pria" {...field} />
+                  </FormControl>
+                  <FormDescription>Beri nama untuk baju ini.</FormDescription>
+                  <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
               control={form.control}
               name={`category`}
-              render={({ field }) => (
+              render={({field}) => (
                 <FormItem>
                   <FormLabel>Kategori Pakaian</FormLabel>
                   <br />
@@ -123,9 +126,12 @@ const AddCloth = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Kategori</SelectLabel>
-                        <SelectItem value="30">Baju Tidur</SelectItem>
-                        <SelectItem value="60">Kemeja</SelectItem>
-                        <SelectItem value="90">Celana</SelectItem>
+                        {clothCategories.map((value, index) => (
+                          <SelectItem key={index} value={value}>
+                            {value.charAt(0).toUpperCase() +
+                              value.slice(1).toLowerCase()}
+                          </SelectItem>
+                        ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -139,7 +145,7 @@ const AddCloth = () => {
             <FormField
               control={form.control}
               name={`gender`}
-              render={({ field }) => (
+              render={({field}) => (
                 <FormItem>
                   <FormLabel>Gender</FormLabel>
                   <br />
@@ -169,7 +175,7 @@ const AddCloth = () => {
             <FormField
               control={form.control}
               name={`size`}
-              render={({ field }) => (
+              render={({field}) => (
                 <FormItem>
                   <FormLabel>Ukuran</FormLabel>
                   <br />
@@ -200,7 +206,7 @@ const AddCloth = () => {
           </CardContent>
           <CardFooter>
             <Button type="submit">
-              Simpan <SaveIcon className={"ml-2 h-4 w-4"} />
+              Simpan <SaveIcon className={'ml-2 h-4 w-4'} />
             </Button>
           </CardFooter>
         </form>

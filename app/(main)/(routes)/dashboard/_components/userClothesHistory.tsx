@@ -30,7 +30,6 @@ const UserClothesHistory = () => {
           <div key={index}>
             <HistoryCard
               id={cloth.clothId}
-              imageUrl={cloth.imageUrl}
               title={cloth.title}
               description={''}
               status={''}

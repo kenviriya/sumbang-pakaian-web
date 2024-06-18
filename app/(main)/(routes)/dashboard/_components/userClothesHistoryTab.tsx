@@ -8,7 +8,6 @@ import {useUser} from '@clerk/clerk-react';
 
 const UserClothesHistory = () => {
   const {isLoading} = useConvexAuth();
-  const {user} = useUser();
   const requestData = useQuery(
     api.controllers.cloth_controller.getUserClothes,
     {}
@@ -27,7 +26,6 @@ const UserClothesHistory = () => {
               <div key={item?._id}>
                 <HistoryCard
                   id={item?._id}
-                  imageUrl={item?.imageUrl ?? ''}
                   title={item?.name}
                   description={item?.description}
                   status={item?.status ?? 'Undefined'}

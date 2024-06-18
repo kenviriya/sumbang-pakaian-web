@@ -63,11 +63,7 @@ const UserClothes = () => {
       <div className="grid grid-cols-1 xl:grid-cols-4 xl:gap-y-5 auto-rows-[240px] auto-cols-[220px]">
         {userClothes.map((cloth) => (
           <div key={cloth.clothId} className="flex flex-col items-center mt-5">
-            <CardCloth
-              clothId={cloth.clothId}
-              imageUrl={cloth.imageUrl}
-              title={cloth.title}
-            />
+            <CardCloth clothId={cloth.clothId} title={cloth.title} />
           </div>
         ))}
       </div>

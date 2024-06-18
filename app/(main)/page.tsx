@@ -9,6 +9,7 @@ import {useConvexAuth} from 'convex/react';
 // Disabling SSR for this component because it causes a mismatch between the server and client rendered content
 import dynamic from 'next/dynamic';
 import {Id} from '@/convex/_generated/dataModel';
+import {useUser} from '@clerk/clerk-react';
 
 const CardSkeleton = dynamic(
   () => import('@/app/(main)/_components/(skeleton)/cardSkeleton'),
@@ -17,6 +18,16 @@ const CardSkeleton = dynamic(
 
 const HomePage = () => {
   const {isLoading} = useConvexAuth();
+  const user = useUser();
+
+  const userId = user.user?.id;
+
+  const donationRequestByUser = useQuery(
+    api.controllers.donation_request_controller.getAllDonationRequest,
+    {
+      userId: userId,
+    }
+  );
 
   const fetchData = useQuery(
     api.controllers.donation_controller.getAllDonations
@@ -39,11 +50,11 @@ const HomePage = () => {
           <>
             {fetchData?.map((item) => (
               <ItemCard
-                key={item.donationId}
+                key={item?.id}
                 imageUrl={item?.imageUrl || ''}
-                title={item?.title || ''}
-                description={item?.description || ''}
-                donationId={item.donationId}
+                title={item?.donationTitle || ''}
+                description={item?.donationDescription || ''}
+                donationId={item?.id || ''}
               />
             ))}
           </>

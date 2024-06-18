@@ -1,102 +1,113 @@
 import { mutation, query } from "@/convex/_generated/server";
 import { v } from "convex/values";
+import {
+  findAllDonationRequest,
+  findDonationRequest,
+  findOneDonationRequest,
+} from "@/convex/repositories/DonationRequestRepository";
+import { findAllMapDonationRequestDetail } from "@/convex/repositories/MapDonationRequestDetailsRepository";
+import { findAllClothRequest } from "@/convex/repositories/ClothRequestRepository";
+import { findOneDonationRequestStatus } from "@/convex/repositories/RefDonationRequestStatusRepository";
+import { findOneClothCategory } from "@/convex/repositories/RefClothCategoryRepository";
+import { filterDonationRequestStatus } from "@/convex/controllers/ref_controller/refDonationRequestStatus";
+import { Id } from "@/convex/_generated/dataModel";
 
 const getAllDonationRequest = query({
   args: {
     userId: v.optional(v.string()),
     statusId: v.optional(v.id("ref_donation_request_status")),
+    duration: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    let donationRequests;
+
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    let getDonationRequests = await ctx.db.query("donation_request").collect();
-
-    const getDonationRequestStatus = await ctx.db
-      .query("ref_donation_request_status")
-      .collect();
-
-    const getDonationRequestDetails = await ctx.db
-      .query("map_donation_request_details")
-      .collect();
-
-    const getClothRequest = await ctx.db.query("cloth_request").collect();
-
-    const getClothCategory = await ctx.db.query("ref_cloth_category").collect();
-
     if (args.userId) {
-      getDonationRequests = getDonationRequests.filter(
-        (donationRequests) => donationRequests.userId === args.userId,
-      );
+      donationRequests = await findDonationRequest(ctx, {
+        userId: args.userId,
+      });
+    } else {
+      donationRequests = await findAllDonationRequest(ctx, {});
     }
 
     if (args.statusId) {
-      getDonationRequests = getDonationRequests.filter(
-        (donationRequests) => donationRequests.statusId === args.statusId,
-      );
+      donationRequests = await findDonationRequest(ctx, {
+        statusId: args.statusId,
+      });
     }
 
-    const donationRequestStatusMap = new Map(
-      getDonationRequestStatus.map((status) => [status._id, status]),
+    if (args.duration) {
+      donationRequests = await findDonationRequest(ctx, {
+        statusId: args.statusId,
+      });
+    }
+
+    const mapDonationRequestDetails = await findAllMapDonationRequestDetail(
+      ctx,
+      {},
     );
 
-    return getDonationRequests.map((donationRequests) => {
-      const requestStatus = donationRequestStatusMap.get(
-        donationRequests.statusId,
-      );
+    const clothRequest = await findAllClothRequest(ctx, {});
 
-      let requestTitle,
-        requestImageUrl,
-        requestDescription,
-        requestDuration,
-        requestAddress,
-        clothRequest;
-      if (donationRequests) {
-        ({
-          title: requestTitle,
-          imageUrl: requestImageUrl,
-          description: requestDescription,
-          duration: requestDuration,
-          address: requestAddress,
-        } = donationRequests);
-        const requestDetail = getDonationRequestDetails.filter(
-          (detail) => detail.donationRequestId === donationRequests._id,
-        );
-        if (requestDetail.length) {
-          const clothesIds = requestDetail.map(
-            (detail) => detail.clothRequestId,
+    if (donationRequests) {
+      return Promise.all(
+        donationRequests.map(async (donationRequest) => {
+          let clothRequests;
+
+          const donationRequestStatus = await findOneDonationRequestStatus(
+            ctx,
+            {
+              id: donationRequest.statusId,
+            },
           );
-          const clothes = getClothRequest.filter((cloth) =>
-            clothesIds.includes(cloth._id),
+
+          const requestDetails = mapDonationRequestDetails.filter(
+            (details) => details.donationRequestId === donationRequest._id,
           );
-          clothRequest = clothes.map((cloth) => {
-            const category = getClothCategory.find(
-              (category) => category._id === cloth.categoryId,
+
+          if (requestDetails.length > 0) {
+            const clothIds = requestDetails.map(
+              (details) => details.clothRequestId,
             );
-            return {
-              size: cloth.size,
-              gender: cloth.gender,
-              category: category?.name,
-              quantity: cloth.quantity,
-            };
-          });
-        }
-      }
-      return {
-        requestId: donationRequests._id,
-        userId: donationRequests.userId,
-        requestStatus: requestStatus?.status,
-        title: requestTitle,
-        imageUrl: requestImageUrl,
-        description: requestDescription,
-        duration: requestDuration,
-        address: requestAddress,
-        clothRequest,
-      };
-    });
+
+            const clothes = clothRequest.filter((cloth) =>
+              clothIds.includes(cloth._id),
+            );
+
+            clothRequests = await Promise.all(
+              clothes.map(async (cloth) => {
+                const clothCategory = await findOneClothCategory(ctx, {
+                  id: cloth.categoryId,
+                });
+                return {
+                  size: cloth.size,
+                  gender: cloth.gender,
+                  category: clothCategory?.name,
+                  quantity: cloth.quantity,
+                };
+              }),
+            );
+          }
+
+          return {
+            requestId: donationRequest._id,
+            userId: donationRequest.userId,
+            imageUrl: donationRequest.imageUrl,
+            title: donationRequest.title,
+            description: donationRequest.description,
+            address: donationRequest.address,
+            duration: donationRequest.duration,
+            requestStatus: donationRequestStatus.status,
+            clothRequests: clothRequests || [],
+          };
+        }),
+      );
+    }
   },
 });
 
@@ -105,70 +116,70 @@ const getDonationRequestById = query({
     donationRequestId: v.id("donation_request"),
   },
   handler: async (ctx, args) => {
-    const donationRequest = await ctx.db.get(args.donationRequestId);
-
-    if (!donationRequest) {
-      throw new Error(
-        `Donation Request with ${args.donationRequestId} not found`,
-      );
-    }
-
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
       throw new Error("Not authenticated");
     }
 
-    const getRequestStatus = await ctx.db.get(donationRequest.statusId);
-
-    const getRequestDetail = await ctx.db
-      .query("map_donation_request_details")
-      .collect();
-
-    const mapDonationRequestDetails = getRequestDetail.filter(
-      (detail) => detail.donationRequestId === donationRequest._id,
-    );
-
-    const getClothRequest = await ctx.db.query("cloth_request").collect();
-
-    const getClothCategory = await ctx.db.query("ref_cloth_category").collect();
-
-    const clothRequest = mapDonationRequestDetails.map((detail) => {
-      const clothes = getClothRequest.find(
-        (clothes) => clothes._id === detail.clothRequestId,
-      );
-      if (clothes) {
-        const category = getClothCategory.find(
-          (category) => category._id === clothes.categoryId,
-        );
-        return {
-          size: clothes.size,
-          gender: clothes.gender,
-          category: category?.name,
-          quantity: clothes.quantity,
-        };
-      }
+    const donationRequest = await findOneDonationRequest(ctx, {
+      id: args.donationRequestId,
     });
 
-    return {
-      requestId: donationRequest._id,
-      userId: donationRequest.userId,
-      requestStatus: getRequestStatus?.status,
-      title: donationRequest.title,
-      imageUrl: donationRequest.imageUrl,
-      description: donationRequest.description,
-      duration: donationRequest.duration,
-      address: donationRequest.address,
-      clothRequest,
-    };
-  },
-});
+    const mapDonationRequestDetails = await findAllMapDonationRequestDetail(
+      ctx,
+      {},
+    );
 
-const getAllDonationRequestDetail = query({
-  handler: async (ctx) => {
-    const getRequestDetail = await ctx.db
-      .query("map_donation_request_details")
-      .collect();
+    const clothRequest = await findAllClothRequest(ctx, {});
+
+    if (donationRequest) {
+      const donationRequestStatus = await findOneDonationRequestStatus(ctx, {
+        id: donationRequest.statusId,
+      });
+
+      const requestDetails = mapDonationRequestDetails.filter(
+        (details) => details.donationRequestId === donationRequest._id,
+      );
+
+      let clothRequests;
+
+      if (requestDetails) {
+        const clothIds = requestDetails.map(
+          (details) => details.clothRequestId,
+        );
+
+        const clothes = clothRequest.filter((cloth) =>
+          clothIds.includes(cloth._id),
+        );
+
+        clothRequests = await Promise.all(
+          clothes.map(async (cloth) => {
+            const clothCategory = await findOneClothCategory(ctx, {
+              id: cloth.categoryId,
+            });
+            return {
+              size: cloth.size,
+              gender: cloth.gender,
+              category: clothCategory?.name,
+              quantity: cloth.quantity,
+            };
+          }),
+        );
+      }
+
+      return {
+        requestId: donationRequest._id,
+        userId: donationRequest.userId,
+        imageUrl: donationRequest.imageUrl,
+        title: donationRequest.title,
+        description: donationRequest.description,
+        address: donationRequest.address,
+        duration: donationRequest.duration,
+        requestStatus: donationRequestStatus?.status,
+        clothRequests: clothRequests || [],
+      };
+    }
   },
 });
 
@@ -226,12 +237,9 @@ const createDonationRequest = mutation({
 
     const userId = identity.subject;
 
-    const getDonationRequestStatusId = await ctx.db
-      .query("ref_donation_request_status")
-      .withIndex("status", (q) => q.eq("status", "PENDING"))
-      .collect();
-
-    const statusId = getDonationRequestStatusId[0]._id;
+    const statusId = await filterDonationRequestStatus(ctx, {
+      status: "PENDING",
+    });
 
     const createDonationRequest = await ctx.db.insert("donation_request", {
       imageUrl: args.imageUrl,
@@ -239,7 +247,7 @@ const createDonationRequest = mutation({
       duration: args.duration,
       description: args.description,
       address: args.address,
-      statusId: statusId,
+      statusId: statusId as Id<"ref_donation_request_status">,
       userId,
     });
 
@@ -286,16 +294,6 @@ const updateDonationRequestStatus = mutation({
     if (!donationRequest) {
       throw new Error("Donation Request not found");
     }
-    //
-    // const getDonationStatusPending = await ctx.db
-    //   .query("ref_donation_request_status")
-    //   .withIndex("status", (q) => q.eq("status", "PENDING"))
-    //   .collect();
-    //
-    // const getDonationStatusApproved = await ctx.db
-    //   .query("ref_donation_request_status")
-    //   .withIndex("status", (q) => q.eq("status", "APPROVED"))
-    //   .collect();
 
     return await ctx.db.patch(args.donationRequestId, {
       statusId: args.statusId,
@@ -306,7 +304,6 @@ const updateDonationRequestStatus = mutation({
 export {
   getAllDonationRequest,
   getDonationRequestById,
-  getAllDonationRequestDetail,
   createDonationRequest,
   createDonationRequestDetail,
   updateDonationRequestStatus,

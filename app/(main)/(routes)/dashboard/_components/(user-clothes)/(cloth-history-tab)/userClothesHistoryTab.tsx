@@ -27,7 +27,6 @@ const UserClothesHistory = () => {
               <div key={item?._id}>
                 <HistoryCard
                   id={item?._id}
-                  imageUrl={item?.imageUrl ?? ''}
                   title={item?.name}
                   description={item?.description}
                   status={item?.status ?? 'Undefined'}

@@ -148,10 +148,10 @@ const RequestDetailPage = () => {
             </CardDescription>
             <Separator className="my-2" />
             <h3 className="font-semibold mb-2">Baju yang di Request</h3>
-            {getRequest?.clothRequest?.length === 0 && (
+            {getRequest?.clothRequests?.length === 0 && (
               <div className="text-muted-foreground">Tidak ada request</div>
             )}
-            {getRequest?.clothRequest?.map((clothRequest, index) => (
+            {getRequest?.clothRequests?.map((clothRequest, index) => (
               <div className="grid grid-cols-4 gap-4 mb-2" key={index}>
                 <div className="col-span-1">
                   <h4 className="font-medium">Kategori</h4>

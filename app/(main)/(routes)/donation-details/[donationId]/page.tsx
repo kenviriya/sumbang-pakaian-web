@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 
-import { Button } from "@/components/ui/button";
+import {Button} from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -10,15 +10,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
-import Image from "next/image";
-import { Shirt } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
-import { Separator } from "@/components/ui/separator";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import Image from 'next/image';
+import {Shirt} from 'lucide-react';
+import {useParams, useRouter} from 'next/navigation';
+import {Separator} from '@/components/ui/separator';
+import {useQuery} from 'convex/react';
+import {api} from '@/convex/_generated/api';
+import {Id} from '@/convex/_generated/dataModel';
 
 const DonationDetailPage = () => {
   const router = useRouter();
@@ -26,22 +26,20 @@ const DonationDetailPage = () => {
 
   const getDonation = useQuery(
     api.controllers.donation_controller.getDonationById,
-    { donationId: params.donationId as Id<"donation"> },
+    {donationId: params.donationId as Id<'donation'>}
   );
-
-  console.log("getDonation", getDonation);
 
   return (
     <div className="mt-2 px-[10%] min-h-[74vh]">
       <div className="flex flex-col items-center">
         <Card className="max-w-[800px]">
           <CardHeader>
-            <CardTitle>{getDonation?.title || "Kosong"}</CardTitle>
+            <CardTitle>{getDonation?.donationTitle || 'Kosong'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex justify-center">
               <Image
-                src={getDonation?.imageUrl || "/"}
+                src={getDonation?.imageUrl || '/'}
                 alt="donation-image"
                 width={800}
                 height={300}
@@ -50,45 +48,45 @@ const DonationDetailPage = () => {
             </div>
             <h3 className="font-semibold">Deskripsi</h3>
             <CardDescription className="mb-2">
-              <p>{getDonation?.description || "Kosong"}</p>
+              <p>{getDonation?.donationDescription || 'Kosong'}</p>
             </CardDescription>
             <h3 className="font-semibold">Lokasi Penerima</h3>
             <CardDescription className="mb-3">
-              <p>{getDonation?.address || "Kosong"}</p>
+              <p>{getDonation?.address || 'Kosong'}</p>
             </CardDescription>
             <Separator className="my-2" />
             <h3 className="font-semibold mb-2">Baju yang di Request</h3>
-            {getDonation?.clothRequest?.map((clothRequest, index) => (
+            {getDonation?.clothRequests?.map((clothRequest, index) => (
               <div className="grid grid-cols-4 gap-4 mb-2" key={index}>
                 <div className="col-span-1">
                   <h4 className="font-medium">Kategori</h4>
-                  <div className={"border-2 border-muted rounded p-1"}>
-                    <div className={"text-muted-foreground"}>
-                      {clothRequest.category || "Kosong"}
+                  <div className={'border-2 border-muted rounded p-1'}>
+                    <div className={'text-muted-foreground'}>
+                      {clothRequest.category || 'Kosong'}
                     </div>
                   </div>
                 </div>
                 <div className="col-span-1">
                   <h4 className="font-medium">Gender</h4>
-                  <div className={"border-2 border-muted rounded p-1"}>
-                    <div className={"text-muted-foreground"}>
-                      {clothRequest.gender || "Kosong"}
+                  <div className={'border-2 border-muted rounded p-1'}>
+                    <div className={'text-muted-foreground'}>
+                      {clothRequest.gender || 'Kosong'}
                     </div>
                   </div>
                 </div>
                 <div className="col-span-1">
                   <h4 className="font-medium">Ukuran</h4>
-                  <div className={"border-2 border-muted rounded p-1"}>
-                    <div className={"text-muted-foreground"}>
-                      {clothRequest.size || "Kosong"}
+                  <div className={'border-2 border-muted rounded p-1'}>
+                    <div className={'text-muted-foreground'}>
+                      {clothRequest.size || 'Kosong'}
                     </div>
                   </div>
                 </div>
                 <div className="col-span-1">
                   <h4 className="font-medium">Quantity</h4>
-                  <div className={"border-2 border-muted rounded p-1"}>
-                    <div className={"text-muted-foreground"}>
-                      {clothRequest.quantity || "Kosong"}
+                  <div className={'border-2 border-muted rounded p-1'}>
+                    <div className={'text-muted-foreground'}>
+                      {clothRequest.quantity || 'Kosong'}
                     </div>
                   </div>
                 </div>

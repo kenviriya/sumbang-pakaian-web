@@ -1,5 +1,6 @@
 import {mutation, query} from '@/convex/_generated/server';
 import {v} from 'convex/values';
+import {Id} from '../_generated/dataModel';
 
 const getAllClothRequest = query({
   handler: async (ctx) => {
@@ -138,13 +139,11 @@ const getUserClothById = query({
 
 const createUserCloth = mutation({
   args: {
-    imageUrl: v.string(),
     name: v.string(),
     size: v.string(),
     gender: v.string(),
-    category: v.id('ref_cloth_category'),
     description: v.string(),
-    status: v.id('ref_user_cloth_status'),
+    categoryId: v.id('ref_cloth_category'),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -155,15 +154,17 @@ const createUserCloth = mutation({
 
     const userId = identity.subject;
 
+    // const getStatusId =
+
     return await ctx.db.insert('user_cloth', {
       userId: userId,
-      imageUrl: args.imageUrl,
       name: args.name,
       size: args.size,
       gender: args.gender,
-      categoryId: args.category,
       description: args.description,
-      statusId: args.status,
+      categoryId: args.categoryId,
+      statusId: 'getStatusId' as Id<'ref_user_cloth_status'>,
+      // statusId: args.statusId,
     });
   },
 });

@@ -45,7 +45,6 @@ const UserClothes = () => {
                 <CardCloth
                   key={item?._id ?? ''}
                   clothId={item?._id ?? ''}
-                  imageUrl={item?.imageUrl ?? ''}
                   title={item?.name ?? ''}
                 />
               ))}

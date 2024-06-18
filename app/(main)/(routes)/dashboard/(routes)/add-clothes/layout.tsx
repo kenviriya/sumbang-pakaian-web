@@ -1,22 +1,25 @@
-"use client";
+'use client';
 
-import { Spinner } from "@/components/spinner";
-import { useConvexAuth } from "convex/react";
-import { redirect } from "next/navigation";
+import {Spinner} from '@/components/spinner';
+import {useUser} from '@clerk/clerk-react';
+import {useConvexAuth} from 'convex/react';
+import {redirect} from 'next/navigation';
 
-const AddClothLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useConvexAuth();
+const AddClothLayout = ({children}: {children: React.ReactNode}) => {
+  const {isAuthenticated, isLoading} = useConvexAuth();
+  const user = useUser();
+  const userRole = user.user?.organizationMemberships[0]?.role;
 
   if (isLoading) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center">
-        <Spinner size={"lg"} />
+        <Spinner size={'lg'} />
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    return redirect("/");
+  if (!isAuthenticated || userRole === 'org:admin') {
+    return redirect('/');
   }
 
   return (

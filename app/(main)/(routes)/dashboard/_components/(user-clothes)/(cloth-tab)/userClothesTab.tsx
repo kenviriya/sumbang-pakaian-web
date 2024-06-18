@@ -5,20 +5,19 @@ import {useRouter} from 'next/navigation';
 import {api} from '@/convex/_generated/api';
 import {useQuery} from 'convex/react';
 import {useConvexAuth} from 'convex/react';
-import {useUser} from '@clerk/clerk-react';
 import {Spinner} from '@/components/spinner';
 
 const UserClothes = () => {
   const router = useRouter();
   const {isLoading} = useConvexAuth();
-  const {user} = useUser();
+
   const requestData = useQuery(
     api.controllers.cloth_controller.getUserClothes,
     {}
   );
 
   return (
-    <div>
+    <>
       <h2 className="mb-2 font-medium">
         Upload foto baju kamu disini. Kamu akan mendapatkan notifikasi jika baju
         kamu dibutuhkan.
@@ -45,7 +44,6 @@ const UserClothes = () => {
                 <CardCloth
                   key={item?._id ?? ''}
                   clothId={item?._id ?? ''}
-                  imageUrl={item?.imageUrl ?? ''}
                   title={item?.name ?? ''}
                 />
               ))}
@@ -53,7 +51,7 @@ const UserClothes = () => {
           )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
