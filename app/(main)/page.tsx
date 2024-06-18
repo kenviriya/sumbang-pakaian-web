@@ -22,12 +22,12 @@ const HomePage = () => {
 
   const userId = user.user?.id;
 
-  const donationRequestByUser = useQuery(
-    api.controllers.donation_request_controller.getAllDonationRequest,
-    {
-      userId: userId,
-    }
-  );
+  // const donationRequestByUser = useQuery(
+  //   api.controllers.donation_request_controller.getAllDonationRequest,
+  //   {
+  //     userId: userId,
+  //   }
+  // );
 
   const fetchData = useQuery(
     api.controllers.donation_controller.getAllDonations
