@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Select,
@@ -8,7 +8,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Form,
   FormControl,
@@ -17,18 +17,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/form';
+import {Input} from '@/components/ui/input';
+import {Button} from '@/components/ui/button';
+import {Textarea} from '@/components/ui/textarea';
+import {Separator} from '@/components/ui/separator';
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 
 import {
   CirclePlus,
@@ -36,74 +36,81 @@ import {
   SendHorizonal,
   Trash2,
   Loader2,
-} from "lucide-react";
+} from 'lucide-react';
 
-import { SubmitHandler, useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import {SubmitHandler, useForm} from 'react-hook-form';
+import {toast} from 'sonner';
+import {useEffect, useState} from 'react';
 
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useRouter } from "next/navigation";
-import { Id } from "@/convex/_generated/dataModel";
-import { useEdgeStore } from "@/lib/edgestore";
-import * as React from "react";
-import { SingleImageDropzone } from "@/components/single-image-dropzone";
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useMutation, useQuery} from 'convex/react';
+import {api} from '@/convex/_generated/api';
+import {useRouter} from 'next/navigation';
+import {Id} from '@/convex/_generated/dataModel';
+import {useEdgeStore} from '@/lib/edgestore';
+import * as React from 'react';
+import {SingleImageDropzone} from '@/components/single-image-dropzone';
 
 const FormSchema = z.object({
   imageUrl: z.string().optional(),
   title: z
     .string({
-      required_error: "Tidak boleh kosong",
+      required_error: 'Tidak boleh kosong',
     })
     .min(5, {
-      message: "Judul minimal 5 karakter.",
+      message: 'Judul minimal 5 karakter.',
     }),
   duration: z.string({
-    required_error: "Tidak boleh kosong",
+    required_error: 'Tidak boleh kosong',
   }),
   desc: z
     .string({
-      required_error: "Tidak boleh kosong",
+      required_error: 'Tidak boleh kosong',
     })
     .min(10, {
-      message: "Deskripsi minimal 10 karakter.",
+      message: 'Deskripsi minimal 10 karakter.',
     })
     .max(160, {
-      message: "Deskripsi maksimal 160 karakter.",
+      message: 'Deskripsi maksimal 160 karakter.',
     }),
   name: z
     .string({
-      required_error: "Tidak boleh kosong",
+      required_error: 'Tidak boleh kosong',
     })
     .min(2, {
-      message: "Wajib diisi minimal 2 karakter.",
+      message: 'Wajib diisi minimal 2 karakter.',
     }),
   address: z
     .string({
-      required_error: "Tidak boleh kosong",
+      required_error: 'Tidak boleh kosong',
     })
     .min(5, {
-      message: "Alamat minimal 5 karakter.",
+      message: 'Alamat minimal 5 karakter.',
+    }),
+  phone: z
+    .string({
+      required_error: 'Tidak boleh kosong',
+    })
+    .min(5, {
+      message: 'Alamat minimal 5 karakter.',
     }),
   clothes: z
     .array(
       z.object({
         category: z.string({
-          required_error: "Tidak boleh kosong",
+          required_error: 'Tidak boleh kosong',
         }),
         gender: z.string({
-          required_error: "Tidak boleh kosong",
+          required_error: 'Tidak boleh kosong',
         }),
         size: z.string({
-          required_error: "Tidak boleh kosong",
+          required_error: 'Tidak boleh kosong',
         }),
         quantity: z.string({
-          required_error: "Tidak boleh kosong",
+          required_error: 'Tidak boleh kosong',
         }),
-      }),
+      })
     )
     .optional(),
 });
@@ -125,19 +132,19 @@ const ArrangeClothes = () => {
   };
 
   const removeCloth = () => {
-    const clothes = form.getValues("clothes");
+    const clothes = form.getValues('clothes');
     if (clothes) {
-      form.setValue("clothes", clothes.slice(0, -1));
+      form.setValue('clothes', clothes.slice(0, -1));
       setCloth(cloth - 1);
     }
   };
 
   const insertDonationRequest = useMutation(
-    api.controllers.donation_request_controller.createDonationRequest,
+    api.controllers.donation_request_controller.createDonationRequest
   );
 
   const getClothCategory = useQuery(
-    api.controllers.ref_controller.refClothCategory.getAllCategory,
+    api.controllers.ref_controller.refClothCategory.getAllCategory
   );
 
   useEffect(() => {
@@ -146,7 +153,7 @@ const ArrangeClothes = () => {
     }
   }, [getClothCategory]);
 
-  const { edgestore } = useEdgeStore();
+  const {edgestore} = useEdgeStore();
 
   const onFileChange = async (file?: File) => {
     if (file) {
@@ -157,27 +164,27 @@ const ArrangeClothes = () => {
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
     setIsLoading(true);
     let clothes: {
-      categoryId: Id<"ref_cloth_category">;
+      categoryId: Id<'ref_cloth_category'>;
       gender: string;
       size: string;
       quantity: number;
     }[] = [];
 
     if (file) {
-      const res = await edgestore.publicFiles.upload({ file });
+      const res = await edgestore.publicFiles.upload({file});
       if (res.url) {
         data.imageUrl = res.url;
-        toast.success("Gambar berhasil diunggah!");
+        toast.success('Gambar berhasil diunggah!');
       }
     }
 
     if (data.clothes && cloth) {
       clothes = data.clothes.map((cloth) => {
         const getCategoryId = getClothCategory?.find(
-          (category) => category.name === cloth.category,
+          (category) => category.name === cloth.category
         );
         return {
-          categoryId: getCategoryId?.id as Id<"ref_cloth_category">,
+          categoryId: getCategoryId?.id as Id<'ref_cloth_category'>,
           gender: cloth.gender,
           size: cloth.size,
           quantity: Number(cloth.quantity),
@@ -192,18 +199,19 @@ const ArrangeClothes = () => {
         duration: Number(data.duration),
         description: data.desc,
         address: data.address,
+        phoneNumber: data.phone,
         clothRequest: clothes,
       }).then(() => {
-        router.push("/");
+        router.push('/');
       });
 
       toast.promise(createRequest, {
-        loading: "Sedang mengirim permintaan...",
-        success: "Permintaan berhasil dikirim!",
+        loading: 'Sedang mengirim permintaan...',
+        success: 'Permintaan berhasil dikirim!',
       });
     } catch (error) {
       console.log(error);
-      toast.error("Permintaan gagal dikirim!");
+      toast.error('Permintaan gagal dikirim!');
     }
   };
   return (
@@ -223,7 +231,7 @@ const ArrangeClothes = () => {
                   name="imageUrl"
                   render={() => (
                     <FormItem>
-                      <div className={"mt-10 mb-10"}>
+                      <div className={'mt-10 mb-10'}>
                         <div className="h-[220px] flex items-center justify-center">
                           <SingleImageDropzone
                             onChange={onFileChange}
@@ -235,7 +243,7 @@ const ArrangeClothes = () => {
                       </div>
                       <Button
                         type="button"
-                        variant={"destructive"}
+                        variant={'destructive'}
                         onClick={() => setFile(undefined)}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
@@ -252,7 +260,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="title"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <FormItem>
                       <FormLabel>Judul Campaign</FormLabel>
                       <br />
@@ -274,7 +282,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="duration"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <FormItem>
                       <FormLabel>Durasi Campaign</FormLabel>
                       <br />
@@ -308,7 +316,7 @@ const ArrangeClothes = () => {
                 <FormField
                   control={form.control}
                   name="desc"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <FormItem>
                       <FormLabel>Deskripsi </FormLabel>
                       <br />
@@ -328,30 +336,50 @@ const ArrangeClothes = () => {
                   )}
                 />
               </div>
-              <div className="col-span-1">
+              <div className="col-span-2">
                 <FormField
                   control={form.control}
                   name="name"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <FormItem>
                       <FormLabel>Nama Penerima</FormLabel>
                       <br />
                       <FormControl>
-                        <Input placeholder="Cth : Bpk. Budi" {...field} />
+                        <Input
+                          placeholder="Cth : Bantu panti asuhan suka bakti"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Nama penerima donasi.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="col-span-1">
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({field}) => (
+                    <FormItem>
+                      <FormLabel>Nomor telepon</FormLabel>
+                      <br />
+                      <FormControl>
+                        <Input placeholder="Cth : 0812345678901" {...field} />
                       </FormControl>
                       <FormDescription>
-                        Nama penerima yang akan menerima pakaian.
+                        Nomor telepon yang dapat dihubungi penerima donasi.
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-3">
                 <FormField
                   control={form.control}
                   name="address"
-                  render={({ field }) => (
+                  render={({field}) => (
                     <FormItem>
                       <FormLabel>Alamat Pengiriman</FormLabel>
                       <br />
@@ -362,7 +390,8 @@ const ArrangeClothes = () => {
                         />
                       </FormControl>
                       <FormDescription>
-                        Alamat yang akan digunakan untuk pengiriman.
+                        Alamat yang akan digunakan untuk pengiriman. Masukan
+                        alamat lengkap agar pengiriman lebih mudah
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -380,7 +409,7 @@ const ArrangeClothes = () => {
                   Kamu bisa request pakaian apa saja yang di butuhkan.
                 </FormDescription>
               </div>
-              {Array.from({ length: cloth }).map((_, index) => (
+              {Array.from({length: cloth}).map((_, index) => (
                 <div
                   className="grid grid-cols-4 gap-x-5 gap-y-2 col-span-3 mb-2"
                   key={index}
@@ -389,7 +418,7 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.category`}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <FormItem>
                           <FormLabel>Kategori Pakaian</FormLabel>
                           <br />
@@ -426,7 +455,7 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.gender`}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <FormItem>
                           <FormLabel>Gender</FormLabel>
                           <br />
@@ -460,7 +489,7 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.size`}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <FormItem>
                           <FormLabel>Ukuran</FormLabel>
                           <br />
@@ -495,7 +524,7 @@ const ArrangeClothes = () => {
                     <FormField
                       control={form.control}
                       name={`clothes.${index}.quantity`}
-                      render={({ field }) => (
+                      render={({field}) => (
                         <FormItem>
                           <FormLabel>Quantity</FormLabel>
                           <br />
@@ -527,7 +556,7 @@ const ArrangeClothes = () => {
 
               {cloth >= 1 && (
                 <Button
-                  variant={"destructive"}
+                  variant={'destructive'}
                   className="col-span-3"
                   onClick={() => removeCloth()}
                   type="button"
@@ -537,7 +566,7 @@ const ArrangeClothes = () => {
               )}
 
               <Button
-                variant={"outline"}
+                variant={'outline'}
                 className="col-span-3"
                 onClick={() => addCloth()}
                 type="button"

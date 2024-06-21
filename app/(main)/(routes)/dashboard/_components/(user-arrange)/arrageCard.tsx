@@ -1,4 +1,10 @@
-import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {Eye} from 'lucide-react';
 import {Skeleton} from '@/components/ui/skeleton';
@@ -8,9 +14,15 @@ interface ArrangeCardProps {
   title: string;
   description: string;
   requestId: string;
+  status: string;
 }
 
-const ArrangeCard = ({title, description, requestId}: ArrangeCardProps) => {
+const ArrangeCard = ({
+  title,
+  description,
+  requestId,
+  status,
+}: ArrangeCardProps) => {
   const router = useRouter();
 
   return (
@@ -20,7 +32,12 @@ const ArrangeCard = ({title, description, requestId}: ArrangeCardProps) => {
           <CardHeader>
             <CardTitle>{title}</CardTitle>
           </CardHeader>
-          <CardContent>{description}</CardContent>
+          <CardContent>
+            {description}
+            <CardDescription className="mt-2">
+              Status: <span className="font-bold">{status}</span>
+            </CardDescription>
+          </CardContent>
         </div>
         <div className={'flex justify-center items-center row-span-2'}>
           <Button
@@ -37,7 +54,7 @@ const ArrangeCard = ({title, description, requestId}: ArrangeCardProps) => {
   );
 };
 
-ArrangeCard.Skeleton = function RequestCardSkeleton() {
+ArrangeCard.Skeleton = function ArrangeCardSkeleton() {
   return <Skeleton className={'h-32 rounded-lg'} />;
 };
 

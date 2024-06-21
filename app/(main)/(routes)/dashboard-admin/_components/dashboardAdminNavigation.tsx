@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useUser } from "@clerk/clerk-react";
-import { Mail, Grip } from "lucide-react";
-import DashboardAdminNavigationButton from "./dashboardAdminNavigationButton";
-import React from "react";
-import ManageDonationContent from "@/app/(main)/(routes)/dashboard-admin/_components/(manage-donation)/manageDonationContent";
-import DonationRequestContent from "@/app/(main)/(routes)/dashboard-admin/_components/(donation-request)/donationRequestContent";
+import {useUser} from '@clerk/clerk-react';
+import {Mail, Grip} from 'lucide-react';
+import DashboardAdminNavigationButton from './dashboardAdminNavigationButton';
+import React from 'react';
+import ManageDonationContent from '@/app/(main)/(routes)/dashboard-admin/_components/(manage-donation)/manageDonationContent';
+import DonationRequestContent from '@/app/(main)/(routes)/dashboard-admin/_components/(donation-request)/donationRequestContent';
 
 interface INavigationProps {
   activeButton: React.ReactNode;
@@ -21,7 +21,6 @@ const DashboardAdminNavigation = ({
   const contentCards = {
     donation: <ManageDonationContent />,
     request: <DonationRequestContent />,
-    // points: <PointsContent />,
   };
 
   return (
@@ -29,18 +28,18 @@ const DashboardAdminNavigation = ({
       <DashboardAdminNavigationButton
         icon={<Mail className="h-5 w-5" />}
         text="Galang Pakaian"
-        isActive={activeButton === "request" && true}
+        isActive={activeButton === 'request' && true}
         onClick={() => {
-          setActiveButton("request");
+          setActiveButton('request');
           setActiveContent(contentCards.request);
         }}
       />
       <DashboardAdminNavigationButton
         icon={<Grip className="h-5 w-5" />}
         text="Mengelola Donasi"
-        isActive={activeButton === "donation" && true}
+        isActive={activeButton === 'donation' && true}
         onClick={() => {
-          setActiveButton("donation");
+          setActiveButton('donation');
           setActiveContent(contentCards.donation);
         }}
       />

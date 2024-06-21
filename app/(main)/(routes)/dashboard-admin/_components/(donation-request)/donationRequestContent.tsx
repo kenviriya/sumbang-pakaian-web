@@ -55,6 +55,13 @@ const DonationRequestContent = () => {
       </CardHeader>
       <ScrollArea className="h-[500px]">
         <CardContent>
+          {fetchDonationRequest && fetchDonationRequest.length <= 0 && (
+            <div className="flex justify-center items-center h-full w-full">
+              <p className="text-center">
+                Tidak ada galang pakaian yang perlu di tinjau
+              </p>
+            </div>
+          )}
           {fetchDonationRequest?.map((donationRequest) => (
             <div className={'mb-4'} key={donationRequest.requestId}>
               <RequestCard

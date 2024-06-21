@@ -1,29 +1,29 @@
-'use client';
+"use client";
 
-import {Spinner} from '@/components/spinner';
-import {useUser} from '@clerk/clerk-react';
-import {useConvexAuth} from 'convex/react';
-import {redirect} from 'next/navigation';
+import { Spinner } from "@/components/spinner";
+import { useUser } from "@clerk/clerk-react";
+import { useConvexAuth } from "convex/react";
+import { redirect } from "next/navigation";
 
-const ArrangeDetailLayout = ({children}: {children: React.ReactNode}) => {
-  const {isAuthenticated, isLoading} = useConvexAuth();
+const ArrangeDetailLayout = ({ children }: { children: React.ReactNode }) => {
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const user = useUser();
   const userRole = user.user?.organizationMemberships[0]?.role;
 
   if (isLoading) {
     return (
       <div className="min-h-[75vh] flex items-center justify-center">
-        <Spinner size={'lg'} />
+        <Spinner size={"lg"} />
       </div>
     );
   }
 
-  if (!isAuthenticated || userRole === 'org:admin') {
-    return redirect('/');
+  if (!isAuthenticated || userRole === "org:admin") {
+    return redirect("/");
   }
 
   return (
-    <div className="min-h-[75vh] bg-[#f8f7f4] px-[20%]">
+    <div className="min-h-[75vh] bg-[#f8f7f4] px-[10%]">
       <main className="h-full">{children}</main>
     </div>
   );

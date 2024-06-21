@@ -23,7 +23,7 @@ const CampaignDetailLayout = ({children}: {children: React.ReactNode}) => {
   }
 
   return (
-    <div className="min-h-[75vh] bg-[#f8f7f4] px-[20%]">
+    <div className="min-h-[75vh] bg-[#f8f7f4] px-[10%]">
       <main className="h-full">{children}</main>
     </div>
   );

@@ -1,6 +1,6 @@
 import {mutation, query} from '@/convex/_generated/server';
 import {v} from 'convex/values';
-import {Id} from '../_generated/dataModel';
+import {findUserClothStatus} from '@/convex/repositories/RefUserClothStatusRepository';
 
 const getAllClothRequest = query({
   handler: async (ctx) => {
@@ -37,6 +37,7 @@ const createClothRequest = mutation({
 
 const getUserClothes = query({
   args: {
+    status: v.optional(v.string()),
     category: v.optional(v.string()),
     size: v.optional(v.string()),
     gender: v.optional(v.string()),
@@ -49,6 +50,8 @@ const getUserClothes = query({
     }
 
     const userId = identity.subject;
+
+    const status = args.status;
 
     let userClothes = await ctx.db
       .query('user_cloth')
@@ -71,6 +74,15 @@ const getUserClothes = query({
 
     if (args.gender) {
       userClothes = userClothes.filter((cloth) => cloth.gender === args.gender);
+    }
+
+    if (args.status && status) {
+      const getStatusId = await findUserClothStatus(ctx, {
+        status: status,
+      });
+      userClothes = userClothes.filter(
+        (cloth) => cloth.statusId === getStatusId
+      );
     }
 
     const getClothCategory = await ctx.db.query('ref_cloth_category').collect();
@@ -154,7 +166,9 @@ const createUserCloth = mutation({
 
     const userId = identity.subject;
 
-    // const getStatusId =
+    const getStatusAvailableId = await findUserClothStatus(ctx, {
+      status: 'AVAILABLE',
+    });
 
     return await ctx.db.insert('user_cloth', {
       userId: userId,
@@ -163,8 +177,7 @@ const createUserCloth = mutation({
       gender: args.gender,
       description: args.description,
       categoryId: args.categoryId,
-      statusId: 'getStatusId' as Id<'ref_user_cloth_status'>,
-      // statusId: args.statusId,
+      statusId: getStatusAvailableId,
     });
   },
 });

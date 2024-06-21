@@ -14,6 +14,38 @@ import {findAllMapDonationFormDetails} from '@/convex/repositories/MapDonationFo
 import {findOneClothCategory} from '@/convex/repositories/RefClothCategoryRepository';
 import {format} from 'date-fns';
 import {getDonationRequestById} from './donation_request_controller';
+import {findOneDonationStatus} from '../repositories/RefDonationStatusRepository';
+
+const filterDonationForm = query({
+  args: {
+    donationFormId: v.optional(v.id('donation_form')),
+    donationId: v.optional(v.id('donation')),
+    donationRequestId: v.optional(v.id('donation_request')),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity) {
+      throw new Error('Not authenticated');
+    }
+
+    const getAllForm = await getAllDonationForm(ctx, {});
+
+    if (args.donationFormId && getAllForm) {
+      return getAllForm.filter((form) => form.formId === args.donationFormId);
+    }
+
+    if (args.donationId && getAllForm) {
+      return getAllForm.filter((form) => form.donationId === args.donationId);
+    }
+
+    if (args.donationRequestId && getAllForm) {
+      return getAllForm.filter(
+        (form) => form.donationRequestId === args.donationRequestId
+      );
+    }
+  },
+});
 
 const getAllDonationForm = query({
   handler: async (ctx) => {
@@ -39,6 +71,10 @@ const getAllDonationForm = query({
           if (!getDonation) {
             throw new Error(`Donation ${donationForm.donationId} not found`);
           }
+
+          const getDonationStatus = await findOneDonationStatus(ctx, {
+            statusId: getDonation.statusId,
+          });
 
           const donationRequest = await getDonationRequestById(ctx, {
             donationRequestId: getDonation.donationRequestId,
@@ -75,12 +111,16 @@ const getAllDonationForm = query({
           }
           return {
             formId: donationForm._id,
+            userName: donationForm.userName,
             formReceipt: donationForm.receipt,
             donationId: getDonation?._id,
+            donationStatus: getDonationStatus?.status,
+            donationRequestId: getDonation.donationRequestId,
             donationImageUrl: donationRequest?.imageUrl,
             donationTitle: donationRequest?.title,
             donationDescription: donationRequest?.description,
             donationAddress: donationRequest?.address,
+            donationPhone: donationRequest?.phoneNumber,
             donationStartDate: getDonation.startDate,
             donationEndDate: getDonation.endDate,
             donationDuration: donationRequest?.duration,
@@ -122,6 +162,10 @@ const getDonationFormById = query({
         throw new Error(`Donation ${getDonationForm.donationId} not found`);
       }
 
+      const getDonationStatus = await findOneDonationStatus(ctx, {
+        statusId: getDonation.statusId,
+      });
+
       const donationRequest = await getDonationRequestById(ctx, {
         donationRequestId: getDonation.donationRequestId,
       });
@@ -157,12 +201,15 @@ const getDonationFormById = query({
       }
       return {
         formId: getDonationForm._id,
+        userName: getDonationForm.userName,
         formReceipt: getDonationForm.receipt,
         donationId: getDonation?._id,
+        donationStatus: getDonationStatus?.status,
         donationImageUrl: donationRequest?.imageUrl,
         donationTitle: donationRequest?.title,
         donationDescription: donationRequest?.description,
         donationAddress: donationRequest?.address,
+        donationPhone: donationRequest?.phoneNumber,
         donationStartDate: getDonation.startDate,
         donationEndDate: getDonation.endDate,
         donationDuration: donationRequest?.duration,
@@ -201,6 +248,10 @@ const getUserDonationForm = query({
             throw new Error(`Donation ${donationForm.donationId} not found`);
           }
 
+          const getDonationStatus = await findOneDonationStatus(ctx, {
+            statusId: getDonation.statusId,
+          });
+
           const donationRequest = await getDonationRequestById(ctx, {
             donationRequestId: getDonation.donationRequestId,
           });
@@ -236,11 +287,14 @@ const getUserDonationForm = query({
           }
           return {
             formId: donationForm._id,
+            userName: donationForm.userName,
             donationId: getDonation?._id,
+            donationStatus: getDonationStatus?.status,
             donationImageUrl: donationRequest?.imageUrl,
             donationTitle: donationRequest?.title,
             donationDescription: donationRequest?.description,
             donationAddress: donationRequest?.address,
+            donationPhone: donationRequest?.phoneNumber,
             donationStartDate: getDonation.startDate,
             donationEndDate: getDonation.endDate,
             donationDuration: donationRequest?.duration,
@@ -274,6 +328,8 @@ const createDonationForm = mutation({
     }
 
     const userId = identity.subject;
+    const userName = identity.name || '';
+
     const deadlineDate = format(new Date(), 'yyyy-MM-dd, HH:mm:ss');
     const getStatusPending = await ctx.db
       .query('ref_donation_form_status')
@@ -284,6 +340,7 @@ const createDonationForm = mutation({
 
     const createDonationForm = await ctx.db.insert('donation_form', {
       userId: userId,
+      userName: userName,
       donationId: args.donationId,
       deadlineDate: deadlineDate,
       statusId: statusId,
@@ -313,15 +370,13 @@ const createDonationForm = mutation({
       }
     }
 
-    return {
-      donationFormId: createDonationForm,
-    };
+    return createDonationForm;
   },
 });
 
 const updateDonationForm = mutation({
   args: {
-    donattionFormId: v.id('donation_form'),
+    donationFormId: v.id('donation_form'),
     receipt: v.optional(v.string()),
     status: v.optional(v.string()),
   },
@@ -333,7 +388,7 @@ const updateDonationForm = mutation({
       throw new Error('Not authenticated');
     }
 
-    const donationForm = await ctx.db.get(args.donattionFormId);
+    const donationForm = await ctx.db.get(args.donationFormId);
 
     const statusId = await findDonationFormStatus(ctx, {
       status: status,
@@ -343,14 +398,26 @@ const updateDonationForm = mutation({
       throw new Error('Donation Request not found');
     }
 
-    return await ctx.db.patch(args.donattionFormId, {
-      receipt: args.receipt,
-      statusId: statusId,
-    });
+    if (args.status) {
+      await ctx.db.patch(args.donationFormId, {
+        statusId: statusId,
+      });
+    }
+
+    if (args.receipt) {
+      await ctx.db.patch(args.donationFormId, {
+        receipt: args.receipt,
+      });
+    }
+
+    if (!args.status && !args.receipt) {
+      throw new Error('No data to update');
+    }
   },
 });
 
 export {
+  filterDonationForm,
   getAllDonationForm,
   getDonationFormById,
   getUserDonationForm,

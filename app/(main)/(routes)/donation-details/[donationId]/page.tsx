@@ -54,6 +54,12 @@ const DonationDetailPage = () => {
             <CardDescription className="mb-3">
               <p>{getDonation?.address || 'Kosong'}</p>
             </CardDescription>
+            <h3 className="font-semibold">
+              Galang Pakaian ini akan berakhir pada
+            </h3>
+            <CardDescription className="mb-3">
+              <p>{getDonation?.endDate || 'Kosong'}</p>
+            </CardDescription>
             <Separator className="my-2" />
             <h3 className="font-semibold mb-2">Baju yang di Request</h3>
             {getDonation?.clothRequests?.map((clothRequest, index) => (

@@ -33,7 +33,7 @@ const RequestDetailPage = () => {
     api.controllers.donation_request_controller.updateDonationRequestStatus,
   );
 
-  const insertDonationMut = useMutation(
+  const insertDonation = useMutation(
     api.controllers.donation_controller.createDonation,
   );
 
@@ -44,20 +44,20 @@ const RequestDetailPage = () => {
     });
   };
 
-  const insertDonation = async () => {
-    const startDate = new Date();
-    let endDate = new Date();
-
-    if (getRequest) {
-      endDate = new Date(startDate);
-      endDate.setDate(endDate.getDate() + getRequest.duration);
-    }
-    await insertDonationMut({
-      donationRequestId: params.requestId as Id<"donation_request">,
-      startDate: format(startDate, "yyyy-MM-dd HH:mm:ss"),
-      endDate: format(endDate, "yyyy-MM-dd HH:mm:ss"),
-    });
-  };
+  // const insertDonation = async () => {
+  //   const startDate = new Date();
+  //   let endDate = new Date();
+  //
+  //   if (getRequest) {
+  //     endDate = new Date(startDate);
+  //     endDate.setDate(endDate.getDate() + getRequest.duration);
+  //   }
+  //   await insertDonation({
+  //     donationRequestId: params.requestId as Id<"donation_request">,
+  //     startDate: format(startDate, "yyyy-MM-dd HH:mm:ss"),
+  //     endDate: format(endDate, "yyyy-MM-dd HH:mm:ss"),
+  //   });
+  // };
 
   const getStatusApprovedId = useQuery(
     api.controllers.ref_controller.refDonationRequestStatus
@@ -80,18 +80,27 @@ const RequestDetailPage = () => {
   const declineId = getStatusDeclineId as Id<"ref_donation_request_status">;
 
   const approveRequest = () => {
+    const startDate = new Date();
+    let endDate = new Date();
+
+    if (getRequest) {
+      endDate = new Date(startDate);
+      endDate.setDate(endDate.getDate() + getRequest.duration);
+    }
     try {
-      const updateStatus = updateDonationRequestStatus(approvedId).then(
-        () => {},
-      );
+      const updateStatus = updateDonationRequestStatus(approvedId);
 
-      const createDonation = insertDonation().then(() => {});
+      const createDonation = insertDonation({
+        donationRequestId: params.requestId as Id<"donation_request">,
+        startDate: format(startDate, "MM-dd-yyyy, HH:mm:ss"),
+        endDate: format(endDate, "MM-dd-yyyy, HH:mm:ss"),
+      });
 
-      Promise.all([updateStatus, createDonation]).then(() => {
+      const updating = Promise.all([updateStatus, createDonation]).then(() => {
         router.push("/dashboard-admin");
       });
 
-      toast.promise(createDonation, {
+      toast.promise(updating, {
         loading: "Sedang update status...",
         success: "Status berhasil di update",
       });

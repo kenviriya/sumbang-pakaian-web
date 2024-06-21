@@ -8,8 +8,6 @@ import {useConvexAuth} from 'convex/react';
 
 // Disabling SSR for this component because it causes a mismatch between the server and client rendered content
 import dynamic from 'next/dynamic';
-import {Id} from '@/convex/_generated/dataModel';
-import {useUser} from '@clerk/clerk-react';
 
 const CardSkeleton = dynamic(
   () => import('@/app/(main)/_components/(skeleton)/cardSkeleton'),
@@ -18,26 +16,18 @@ const CardSkeleton = dynamic(
 
 const HomePage = () => {
   const {isLoading} = useConvexAuth();
-  const user = useUser();
-
-  const userId = user.user?.id;
-
-  // const donationRequestByUser = useQuery(
-  //   api.controllers.donation_request_controller.getAllDonationRequest,
-  //   {
-  //     userId: userId,
-  //   }
-  // );
 
   const fetchData = useQuery(
-    api.controllers.donation_controller.getAllDonations
+    api.controllers.donation_controller.filterDonation,
+    {
+      status: 'ACTIVE',
+    }
   );
 
   return (
     <div className="h-full w-full">
       <Heading />
-      <div className="px-[15%] mt-5 bg-[#f8f7f4] grid grid-cols-4 justify-items-center gap-y-10 gap-x-5">
-        {/*<div className="flex flex-row flex-wrap gap-5 justify-center">*/}
+      <div className="px-[10%] mt-5 bg-[#f8f7f4] grid grid-cols-4 justify-items-center gap-y-10 gap-x-5">
         {isLoading && <CardSkeleton quantity={10} />}
         {!isLoading && fetchData?.length === 0 && (
           <div className={'col-span-4'}>
@@ -55,11 +45,12 @@ const HomePage = () => {
                 title={item?.donationTitle || ''}
                 description={item?.donationDescription || ''}
                 donationId={item?.id || ''}
+                userId={item?.userId || ''}
+                donationRequestId={item?.donationRequestId || ''}
               />
             ))}
           </>
         )}
-        {/*</div>*/}
       </div>
     </div>
   );

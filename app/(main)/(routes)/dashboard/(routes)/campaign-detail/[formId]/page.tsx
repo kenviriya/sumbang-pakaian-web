@@ -25,7 +25,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useMutation, useQuery} from 'convex/react';
 import {Loader2, Package, SendHorizonal} from 'lucide-react';
 import Image from 'next/image';
-import {useParams, useRouter} from 'next/navigation';
+import {useParams} from 'next/navigation';
 import {useState} from 'react';
 import {SubmitHandler, useForm} from 'react-hook-form';
 import {toast} from 'sonner';
@@ -61,7 +61,7 @@ const CampaignDetailPage = () => {
     setIsLoading(true);
     try {
       const updateDonationFormReceipt = updateDonationForm({
-        donattionFormId: params.formId as Id<'donation_form'>,
+        donationFormId: params.formId as Id<'donation_form'>,
         receipt: data.receipt,
         status: 'ON VERIFICATION',
       });
@@ -79,7 +79,7 @@ const CampaignDetailPage = () => {
   const kirimSendiri = () => {
     try {
       const updateDonationFormReceipt = updateDonationForm({
-        donattionFormId: params.formId as Id<'donation_form'>,
+        donationFormId: params.formId as Id<'donation_form'>,
         receipt: 'KIRIM SENDIRI',
         status: 'ON DELIVERY',
       });
@@ -120,6 +120,11 @@ const CampaignDetailPage = () => {
             <h3 className="font-semibold">Lokasi Penerima</h3>
             <CardDescription className="mb-3">
               <p>{getFormDetail?.donationAddress || 'Kosong'}</p>
+            </CardDescription>
+
+            <h3 className="font-semibold">Nomor Penerima</h3>
+            <CardDescription className="mb-3">
+              <p>{getFormDetail?.donationPhone || 'Kosong'}</p>
             </CardDescription>
 
             <h3 className="font-semibold">Kirimkan sebelum tanggal:</h3>

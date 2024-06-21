@@ -91,10 +91,13 @@ const getAllDonations = query({
 
             return {
               id: donation._id,
+              userId: donationRequest.userId,
+              donationRequestId: donationRequest._id,
               imageUrl: donationImageUrl,
               donationTitle: donationTitle,
               donationDescription: donationDescription,
               address: donationAddress,
+              phoneNumber: donationRequest.phoneNumber,
               duration: donationDuration,
               startDate: donation.startDate,
               endDate: donation.endDate,
@@ -187,9 +190,12 @@ const getDonationById = query({
 
         return {
           imageUrl: donationImageUrl,
+          userId: donationRequest.userId,
+          donationRequestId: donationRequest._id,
           donationTitle: donationTitle,
           donationDescription: donationDescription,
           address: donationAddress,
+          phoneNumber: donationRequest.phoneNumber,
           duration: donationDuration,
           startDate: getDonation.startDate,
           endDate: getDonation.endDate,
@@ -231,7 +237,7 @@ const createDonation = mutation({
 const updateDonationStatus = mutation({
   args: {
     donationId: v.id('donation'),
-    statusId: v.id('ref_donation_status'),
+    status: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -248,8 +254,12 @@ const updateDonationStatus = mutation({
       throw new Error(`Donation with ${args.donationId} not found`);
     }
 
+    const getDonationStatusId = await findDonationStatus(ctx, {
+      status: args.status,
+    });
+
     return await ctx.db.patch(args.donationId, {
-      statusId: args.statusId,
+      statusId: getDonationStatusId,
     });
   },
 });
@@ -257,12 +267,24 @@ const updateDonationStatus = mutation({
 const filterDonation = query({
   args: {
     status: v.optional(v.string()),
-    statusId: v.optional(v.id('ref_donation_status')),
+    requestId: v.optional(v.id('donation_request')),
   },
   handler: async (ctx, args) => {
-    const getDonations = await findDonation(ctx, {
-      status: args.status,
-    });
+    const status = args.status;
+    const requestId = args.requestId;
+
+    let getDonations;
+    if (status) {
+      getDonations = await findDonation(ctx, {
+        status: args.status,
+      });
+    }
+
+    if (requestId) {
+      getDonations = await findDonation(ctx, {
+        donationRequestId: args.requestId,
+      });
+    }
 
     if (getDonations) {
       return Promise.all(
@@ -336,10 +358,13 @@ const filterDonation = query({
 
             return {
               id: donation._id,
+              userId: donationRequest.userId,
+              donationRequestId: donationRequest._id,
               imageUrl: donationImageUrl,
               donationTitle: donationTitle,
               donationDescription: donationDescription,
               address: donationAddress,
+              phoneNumber: donationRequest.phoneNumber,
               duration: donationDuration,
               startDate: donation.startDate,
               endDate: donation.endDate,

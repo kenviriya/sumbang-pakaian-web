@@ -1,14 +1,16 @@
 import { v } from "convex/values";
-import { internalMutation, internalQuery } from "../_generated/server";
+import { internalQuery } from "../_generated/server";
 
 const findDonation = internalQuery({
   args: {
     statusId: v.optional(v.id("ref_donation_status")),
     status: v.optional(v.string()),
+    donationRequestId: v.optional(v.id("donation_request")),
   },
   handler: async (ctx, args) => {
     const statusId = args.statusId;
     const status = args.status;
+    const donationRequestId = args.donationRequestId;
 
     if (statusId) {
       return await ctx.db
@@ -32,6 +34,15 @@ const findDonation = internalQuery({
         .withIndex("by_status", (q) => q.eq("statusId", getStatusId[0]._id))
         .collect();
     }
+
+    if (donationRequestId) {
+      return await ctx.db
+        .query("donation")
+        .withIndex("by_request", (q) =>
+          q.eq("donationRequestId", donationRequestId),
+        )
+        .collect();
+    }
   },
 });
 
@@ -50,56 +61,4 @@ const findOneDonation = internalQuery({
   },
 });
 
-const createDonation = internalMutation({
-  args: {
-    donationRequestId: v.id("donation_request"),
-    statusId: v.id("ref_donation_status"),
-    startDate: v.string(),
-    endDate: v.string(),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("donation", {
-      donationRequestId: args.donationRequestId,
-      statusId: args.statusId,
-      startDate: args.startDate,
-      endDate: args.endDate,
-    });
-  },
-});
-
-const updateDonation = internalMutation({
-  args: {
-    id: v.id("donation"),
-    statusId: v.optional(v.id("ref_donation_status")),
-    startDate: v.optional(v.string()),
-    endDate: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => {
-    const id = args.id;
-    const statusId = args.statusId;
-    const startDate = args.startDate;
-    const endDate = args.endDate;
-
-    if (statusId) {
-      await ctx.db.patch(id, { statusId });
-    }
-
-    if (startDate) {
-      await ctx.db.patch(id, { startDate });
-    }
-
-    if (endDate) {
-      await ctx.db.patch(id, { endDate });
-    }
-
-    return await ctx.db.get(id);
-  },
-});
-
-export {
-  findDonation,
-  findAllDonation,
-  findOneDonation,
-  createDonation,
-  updateDonation,
-};
+export { findDonation, findAllDonation, findOneDonation };

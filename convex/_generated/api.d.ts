@@ -23,7 +23,6 @@ import type * as controllers_ref_controller_refDonationRequestStatus from "../co
 import type * as controllers_ref_controller_refDonationStatus from "../controllers/ref_controller/refDonationStatus.js";
 import type * as controllers_ref_controller_refNotificationStatus from "../controllers/ref_controller/refNotificationStatus.js";
 import type * as controllers_ref_controller_refUserClothStatus from "../controllers/ref_controller/refUserClothStatus.js";
-import type * as controllers_user_donation_controller from "../controllers/user_donation_controller.js";
 import type * as repositories_ClothRequestRepository from "../repositories/ClothRequestRepository.js";
 import type * as repositories_DonationFormDetailRepository from "../repositories/DonationFormDetailRepository.js";
 import type * as repositories_DonationFormRepository from "../repositories/DonationFormRepository.js";
@@ -35,6 +34,7 @@ import type * as repositories_RefClothCategoryRepository from "../repositories/R
 import type * as repositories_RefDonationFormStatusRepository from "../repositories/RefDonationFormStatusRepository.js";
 import type * as repositories_RefDonationRequestStatusRepository from "../repositories/RefDonationRequestStatusRepository.js";
 import type * as repositories_RefDonationStatusRepository from "../repositories/RefDonationStatusRepository.js";
+import type * as repositories_RefUserClothStatusRepository from "../repositories/RefUserClothStatusRepository.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -54,7 +54,6 @@ declare const fullApi: ApiFromModules<{
   "controllers/ref_controller/refDonationStatus": typeof controllers_ref_controller_refDonationStatus;
   "controllers/ref_controller/refNotificationStatus": typeof controllers_ref_controller_refNotificationStatus;
   "controllers/ref_controller/refUserClothStatus": typeof controllers_ref_controller_refUserClothStatus;
-  "controllers/user_donation_controller": typeof controllers_user_donation_controller;
   "repositories/ClothRequestRepository": typeof repositories_ClothRequestRepository;
   "repositories/DonationFormDetailRepository": typeof repositories_DonationFormDetailRepository;
   "repositories/DonationFormRepository": typeof repositories_DonationFormRepository;
@@ -66,6 +65,7 @@ declare const fullApi: ApiFromModules<{
   "repositories/RefDonationFormStatusRepository": typeof repositories_RefDonationFormStatusRepository;
   "repositories/RefDonationRequestStatusRepository": typeof repositories_RefDonationRequestStatusRepository;
   "repositories/RefDonationStatusRepository": typeof repositories_RefDonationStatusRepository;
+  "repositories/RefUserClothStatusRepository": typeof repositories_RefUserClothStatusRepository;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

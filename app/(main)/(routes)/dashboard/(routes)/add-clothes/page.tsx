@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Card,
@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -15,16 +15,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import ImageDropzoneCard from '@/components/image-dropzone-card';
-import {zodResolver} from '@hookform/resolvers/zod';
-import {SubmitHandler, useForm} from 'react-hook-form';
-import {z} from 'zod';
-import {useEffect, useState} from 'react';
-import {useEdgeStore} from '@/lib/edgestore';
-import {Button} from '@/components/ui/button';
+} from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
-import * as React from 'react';
+import * as React from "react";
 import {
   Select,
   SelectContent,
@@ -33,25 +31,41 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import {SaveIcon} from 'lucide-react';
-import {useMutation, useQuery} from 'convex/react';
-import {api} from '@/convex/_generated/api';
-import {Input} from '@/components/ui/input';
-import {Id} from '@/convex/_generated/dataModel';
+} from "@/components/ui/select";
+import { Loader2, SaveIcon } from "lucide-react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Input } from "@/components/ui/input";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const FormSchema = z.object({
-  title: z.string(),
-  category: z.string(),
-  gender: z.string(),
-  size: z.string(),
+  title: z.string({
+    required_error: "Tidak boleh kosong",
+  }),
+  description: z.string({
+    required_error: "Tidak boleh kosong",
+  }),
+  category: z.string({
+    required_error: "Pilih salah satu",
+  }),
+  gender: z.string({
+    required_error: "Pilih salah satu",
+  }),
+  size: z.string({
+    required_error: "Pilih salah satu",
+  }),
 });
 
 const AddCloth = () => {
+  const router = useRouter();
+
   const [clothCategories, setClothCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const getClothCategory = useQuery(
-    api.controllers.ref_controller.refClothCategory.getAllCategory
+    api.controllers.ref_controller.refClothCategory.getAllCategory,
   );
 
   useEffect(() => {
@@ -62,26 +76,39 @@ const AddCloth = () => {
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    mode: 'onSubmit',
-    reValidateMode: 'onChange',
+    mode: "onSubmit",
+    reValidateMode: "onChange",
   });
 
   const insertUserCloth = useMutation(
-    api.controllers.cloth_controller.createUserCloth
+    api.controllers.cloth_controller.createUserCloth,
   );
 
   const onSubmit: SubmitHandler<z.infer<typeof FormSchema>> = async (data) => {
+    setIsLoading(true);
+
     const getCategoryId = getClothCategory?.find(
-      (category) => category.name === data.category
+      (category) => category.name === data.category,
     );
 
-    const createUserCloth = await insertUserCloth({
-      name: data.title,
-      categoryId: getCategoryId?.id as Id<'ref_cloth_category'>,
-      gender: data.gender,
-      size: data.size,
-      description: '',
-    });
+    try {
+      const createUserCloth = insertUserCloth({
+        name: data.title,
+        categoryId: getCategoryId?.id as Id<"ref_cloth_category">,
+        gender: data.gender,
+        size: data.size,
+        description: data.description,
+      }).then(() => {
+        router.push("/dashboard");
+      });
+      toast.promise(createUserCloth, {
+        loading: "Sedang mengirim permintaan...",
+        success: "Permintaan berhasil dikirim!",
+      });
+    } catch (error) {
+      console.log(error);
+      toast.error("Permintaan gagal dikirim!");
+    }
   };
 
   return (
@@ -95,12 +122,12 @@ const AddCloth = () => {
             <FormField
               control={form.control}
               name="title"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nama Pakaian</FormLabel>
                   <br />
                   <FormControl>
-                    <Input placeholder="Cth : Baju tidur pria" {...field} />
+                    <Input placeholder="Cth : Baju tidur" {...field} />
                   </FormControl>
                   <FormDescription>Beri nama untuk baju ini.</FormDescription>
                   <FormMessage />
@@ -109,8 +136,25 @@ const AddCloth = () => {
             />
             <FormField
               control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Deskripsi Pakaian</FormLabel>
+                  <br />
+                  <FormControl>
+                    <Input placeholder="Cth : Baju tidur pria" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Beri deskripsi untuk baju ini.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name={`category`}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Kategori Pakaian</FormLabel>
                   <br />
@@ -145,7 +189,7 @@ const AddCloth = () => {
             <FormField
               control={form.control}
               name={`gender`}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Gender</FormLabel>
                   <br />
@@ -175,7 +219,7 @@ const AddCloth = () => {
             <FormField
               control={form.control}
               name={`size`}
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Ukuran</FormLabel>
                   <br />
@@ -204,11 +248,21 @@ const AddCloth = () => {
               )}
             />
           </CardContent>
-          <CardFooter>
-            <Button type="submit">
-              Simpan <SaveIcon className={'ml-2 h-4 w-4'} />
-            </Button>
-          </CardFooter>
+          {isLoading && (
+            <CardFooter>
+              <Button disabled>
+                Mohon tunggu...
+                <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+              </Button>
+            </CardFooter>
+          )}
+          {!isLoading && (
+            <CardFooter>
+              <Button type="submit">
+                Simpan <SaveIcon className={"ml-2 h-4 w-4"} />
+              </Button>
+            </CardFooter>
+          )}
         </form>
       </Form>
     </Card>

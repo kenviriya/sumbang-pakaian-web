@@ -1,4 +1,4 @@
-import {CardHeader, CardTitle, CardContent, Card} from '@/components/ui/card';
+import {CardHeader, CardTitle, CardContent} from '@/components/ui/card';
 import ArrangeCard from './arrageCard';
 import {ScrollArea} from '@/components/ui/scroll-area';
 import {api} from '@/convex/_generated/api';
@@ -19,7 +19,9 @@ const ArrangeContent = () => {
     return (
       <>
         <CardHeader>
-          <CardTitle>Galang Pakaian yang Perlu di Tinjau</CardTitle>
+          <CardTitle>
+            <h1>Galang Pakaian yang Kamu Buat</h1>
+          </CardTitle>
         </CardHeader>
         <ScrollArea className="h-[700px]">
           <CardContent>
@@ -43,12 +45,18 @@ const ArrangeContent = () => {
       </CardHeader>
       <ScrollArea className="h-[500px]">
         <CardContent>
+          {getUserDonationRequest?.length === 0 && (
+            <h2 className="text-muted-foreground col-span-4 justify-center flex">
+              Kamu belum membuat galang pakaian
+            </h2>
+          )}
           {getUserDonationRequest?.map((item) => (
             <div className={'mb-4'} key={item?.requestId}>
               <ArrangeCard
                 title={item?.title}
                 description={item?.description}
                 requestId={item?.requestId}
+                status={item?.requestStatus}
               />
             </div>
           ))}

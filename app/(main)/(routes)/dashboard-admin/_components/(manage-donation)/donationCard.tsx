@@ -21,6 +21,7 @@ interface IDonationCardProps {
   title: string;
   description: string;
   donationId: string;
+  status: string;
 }
 
 const DonationCard = ({
@@ -28,6 +29,7 @@ const DonationCard = ({
   title,
   description,
   donationId,
+  status,
 }: IDonationCardProps) => {
   const {isAuthenticated, isLoading} = useConvexAuth();
   const router = useRouter();
@@ -41,7 +43,7 @@ const DonationCard = ({
   };
 
   return (
-    <Card className="w-[200px] h-[330px]">
+    <Card className="w-[200px] h-[360px]">
       <CardContent className="p-0">
         <AspectRatio ratio={4 / 3}>
           <Image
@@ -54,10 +56,13 @@ const DonationCard = ({
           />
         </AspectRatio>
       </CardContent>
-      <div className="flex flex-col justify-between h-[130px]">
+      <div className="flex flex-col justify-between h-[160px]">
         <CardHeader>
           <CardTitle>{title}</CardTitle>
           <CardDescription>{truncateDescription(description)}</CardDescription>
+          <CardDescription>
+            Status: <span className="font-bold">{status}</span>
+          </CardDescription>
         </CardHeader>
       </div>
       <CardFooter>
@@ -76,6 +81,10 @@ const DonationCard = ({
       </CardFooter>
     </Card>
   );
+};
+
+DonationCard.Skeleton = function ArrangeCardSkeleton() {
+  return <Skeleton className={'w-[200px] h-[360px] rounded-lg'} />;
 };
 
 export default DonationCard;

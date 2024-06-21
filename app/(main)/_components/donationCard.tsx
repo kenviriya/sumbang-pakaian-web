@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import {Button} from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -8,20 +8,22 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from '@/components/ui/card';
-import Image from 'next/image';
-import {Shirt} from 'lucide-react';
-import {useRouter} from 'next/navigation';
-import {useConvexAuth} from 'convex/react';
-import {SignInButton} from '@clerk/clerk-react';
-import {Skeleton} from '@/components/ui/skeleton';
-import {AspectRatio} from '@/components/ui/aspect-ratio';
+} from "@/components/ui/card";
+import Image from "next/image";
+import { Shirt } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useConvexAuth } from "convex/react";
+import { SignInButton, useUser } from "@clerk/clerk-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface IDonationCardProps {
   imageUrl: string;
   title: string;
   description: string;
+  userId: string;
   donationId: string;
+  donationRequestId: string;
 }
 
 const DonationCard = ({
@@ -29,14 +31,19 @@ const DonationCard = ({
   title,
   description,
   donationId,
+  userId,
+  donationRequestId,
 }: IDonationCardProps) => {
-  const {isAuthenticated, isLoading} = useConvexAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
 
+  const user = useUser();
+  const userIdLogin = user.user?.id;
+
   const truncateDescription = (description: string) => {
-    const words = description.split(' ');
+    const words = description.split(" ");
     if (words.length > 15) {
-      return words.slice(0, 15).join(' ') + '...';
+      return words.slice(0, 15).join(" ") + "...";
     }
     return description;
   };
@@ -63,7 +70,7 @@ const DonationCard = ({
       </div>
       <CardFooter>
         {isLoading && <Skeleton className="w-full h-10" />}
-        {isAuthenticated && !isLoading && (
+        {isAuthenticated && !isLoading && userId !== userIdLogin && (
           <Button
             className="w-full"
             onClick={() => {
@@ -72,6 +79,17 @@ const DonationCard = ({
           >
             <Shirt className="mr-2 h-4 w-4" />
             Sumbang
+          </Button>
+        )}
+        {isAuthenticated && !isLoading && userId === userIdLogin && (
+          <Button
+            className="w-full"
+            onClick={() => {
+              router.push(`/dashboard/arrange-detail/${donationRequestId}`);
+            }}
+          >
+            <Shirt className="mr-2 h-4 w-4" />
+            Manage
           </Button>
         )}
         {!isAuthenticated && !isLoading && (

@@ -4,7 +4,6 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { useConvexAuth } from "convex/react";
 import { Spinner } from "@/components/spinner";
-import { useUser } from "@clerk/clerk-react";
 
 const UserClothesHistory = () => {
   const { isLoading } = useConvexAuth();

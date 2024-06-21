@@ -28,7 +28,6 @@ const DashboardNavigation = ({
     sumbang: <SumbangContent />,
     donasi: <DonasiContent />,
     galang: <ArrangeContent />,
-    // history: <HistoryContent />,
     // points: <PointsContent />,
   };
 
@@ -54,7 +53,7 @@ const DashboardNavigation = ({
       />
       <DashboardNavigationButton
         icon={<HandHeart className="h-5 w-5" />}
-        text={"Galang Dana"}
+        text={"Galang Pakaian"}
         isActive={activeButton === "galang" && true}
         onClick={() => {
           setActiveButton("galang");
