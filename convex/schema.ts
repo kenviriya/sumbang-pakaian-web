@@ -94,6 +94,13 @@ export default defineSchema({
   }),
   // End of User Cloth
 
+  // Banner
+  banner: defineTable({
+    imageUrl: v.string(),
+    title: v.string(),
+  }).index("title", ["title"]),
+  // End of Banner
+
   // Ref Tables
   ref_donation_request_status: defineTable({
     status: v.string(),

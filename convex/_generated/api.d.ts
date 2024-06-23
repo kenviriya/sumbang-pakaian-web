@@ -14,6 +14,7 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as controllers_banner_controller from "../controllers/banner_controller.js";
 import type * as controllers_cloth_controller from "../controllers/cloth_controller.js";
 import type * as controllers_donation_controller from "../controllers/donation_controller.js";
 import type * as controllers_donation_form_controller from "../controllers/donation_form_controller.js";
@@ -25,6 +26,7 @@ import type * as controllers_ref_controller_refDonationStatus from "../controlle
 import type * as controllers_ref_controller_refNotificationStatus from "../controllers/ref_controller/refNotificationStatus.js";
 import type * as controllers_ref_controller_refUserClothStatus from "../controllers/ref_controller/refUserClothStatus.js";
 import type * as crons from "../crons.js";
+import type * as repositories_BannerRepository from "../repositories/BannerRepository.js";
 import type * as repositories_ClothRequestRepository from "../repositories/ClothRequestRepository.js";
 import type * as repositories_DonationFormDetailRepository from "../repositories/DonationFormDetailRepository.js";
 import type * as repositories_DonationFormRepository from "../repositories/DonationFormRepository.js";
@@ -49,6 +51,7 @@ import type * as repositories_RefUserClothStatusRepository from "../repositories
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "controllers/banner_controller": typeof controllers_banner_controller;
   "controllers/cloth_controller": typeof controllers_cloth_controller;
   "controllers/donation_controller": typeof controllers_donation_controller;
   "controllers/donation_form_controller": typeof controllers_donation_form_controller;
@@ -60,6 +63,7 @@ declare const fullApi: ApiFromModules<{
   "controllers/ref_controller/refNotificationStatus": typeof controllers_ref_controller_refNotificationStatus;
   "controllers/ref_controller/refUserClothStatus": typeof controllers_ref_controller_refUserClothStatus;
   crons: typeof crons;
+  "repositories/BannerRepository": typeof repositories_BannerRepository;
   "repositories/ClothRequestRepository": typeof repositories_ClothRequestRepository;
   "repositories/DonationFormDetailRepository": typeof repositories_DonationFormDetailRepository;
   "repositories/DonationFormRepository": typeof repositories_DonationFormRepository;
