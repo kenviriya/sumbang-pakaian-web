@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import {Button} from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
@@ -8,13 +8,13 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from '@/components/ui/card';
-import Image from 'next/image';
-import {Shirt} from 'lucide-react';
-import {useRouter} from 'next/navigation';
-import {useConvexAuth} from 'convex/react';
-import {Skeleton} from '@/components/ui/skeleton';
-import {AspectRatio} from '@/components/ui/aspect-ratio';
+} from "@/components/ui/card";
+import Image from "next/image";
+import { Shirt } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useConvexAuth } from "convex/react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 interface IDonationCardProps {
   imageUrl: string;
@@ -31,13 +31,13 @@ const DonationCard = ({
   donationId,
   status,
 }: IDonationCardProps) => {
-  const {isAuthenticated, isLoading} = useConvexAuth();
+  const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
 
   const truncateDescription = (description: string) => {
-    const words = description.split(' ');
-    if (words.length > 15) {
-      return words.slice(0, 15).join(' ') + '...';
+    const words = description.split(" ");
+    if (words.length > 5) {
+      return words.slice(0, 5).join(" ") + "...";
     }
     return description;
   };
@@ -84,7 +84,7 @@ const DonationCard = ({
 };
 
 DonationCard.Skeleton = function ArrangeCardSkeleton() {
-  return <Skeleton className={'w-[200px] h-[360px] rounded-lg'} />;
+  return <Skeleton className={"w-[200px] h-[360px] rounded-lg"} />;
 };
 
 export default DonationCard;

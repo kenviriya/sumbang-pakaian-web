@@ -1,22 +1,22 @@
-import {Button} from '@/components/ui/button';
-import {Separator} from '@/components/ui/separator';
-import CardCloth from './clothCard';
-import {useRouter} from 'next/navigation';
-import {api} from '@/convex/_generated/api';
-import {useQuery} from 'convex/react';
-import {useConvexAuth} from 'convex/react';
-import {CardContent} from '@/components/ui/card';
-import {ScrollArea} from '@/components/ui/scroll-area';
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import CardCloth from "./clothCard";
+import { useRouter } from "next/navigation";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import { useConvexAuth } from "convex/react";
+import { CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const UserClothes = () => {
   const router = useRouter();
-  const {isLoading} = useConvexAuth();
+  const { isLoading } = useConvexAuth();
 
   const requestData = useQuery(
     api.controllers.cloth_controller.getUserClothes,
     {
-      status: 'AVAILABLE',
-    }
+      status: "AVAILABLE",
+    },
   );
 
   if (requestData === undefined) {
@@ -34,7 +34,7 @@ const UserClothes = () => {
         </Button>
         <ScrollArea className="h-[500px]">
           <CardContent>
-            {Array.from({length: 6}, (_, i) => (
+            {Array.from({ length: 6 }, (_, i) => (
               <div className="mb-4" key={i}>
                 <CardCloth.Skeleton />
               </div>
@@ -70,11 +70,10 @@ const UserClothes = () => {
           {!isLoading && requestData?.length !== 0 && (
             <>
               {requestData?.map((item) => (
-                <div key={item?._id} className={'mt-4'}>
+                <div key={item?.clothId} className={"mt-4"}>
                   <CardCloth
-                    clothId={item?._id}
+                    clothId={item?.clothId}
                     title={item?.name}
-                    description={item?.description}
                     status={item?.status}
                   />
                 </div>

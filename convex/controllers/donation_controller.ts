@@ -1,19 +1,19 @@
-import {mutation, query} from '@/convex/_generated/server';
-import {v} from 'convex/values';
+import { internalMutation, mutation, query } from "@/convex/_generated/server";
+import { v } from "convex/values";
 import {
   findAllDonation,
   findDonation,
   findOneDonation,
-} from '@/convex/repositories/DonationRepository';
+} from "@/convex/repositories/DonationRepository";
 import {
   findDonationStatus,
   findOneDonationStatus,
-} from '@/convex/repositories/RefDonationStatusRepository';
-import {findOneDonationRequest} from '@/convex/repositories/DonationRequestRepository';
-import {findAllMapDonationRequestDetail} from '@/convex/repositories/MapDonationRequestDetailsRepository';
-import {findAllClothRequest} from '@/convex/repositories/ClothRequestRepository';
-import {findOneDonationRequestStatus} from '@/convex/repositories/RefDonationRequestStatusRepository';
-import {findOneClothCategory} from '@/convex/repositories/RefClothCategoryRepository';
+} from "@/convex/repositories/RefDonationStatusRepository";
+import { findOneDonationRequest } from "@/convex/repositories/DonationRequestRepository";
+import { findAllMapDonationRequestDetail } from "@/convex/repositories/MapDonationRequestDetailsRepository";
+import { findAllClothRequest } from "@/convex/repositories/ClothRequestRepository";
+import { findOneDonationRequestStatus } from "@/convex/repositories/RefDonationRequestStatusRepository";
+import { findOneClothCategory } from "@/convex/repositories/RefClothCategoryRepository";
 
 const getAllDonations = query({
   handler: async (ctx) => {
@@ -58,20 +58,20 @@ const getAllDonations = query({
               ctx,
               {
                 id: donationRequest.statusId,
-              }
+              },
             );
 
             const requestDetails = mapDonationRequestDetails.filter(
-              (details) => details.donationRequestId === donationRequest._id
+              (details) => details.donationRequestId === donationRequest._id,
             );
 
             if (requestDetails.length > 0) {
               const clothIds = requestDetails.map(
-                (details) => details.clothRequestId
+                (details) => details.clothRequestId,
               );
 
               const clothes = clothRequest.filter((cloth) =>
-                clothIds.includes(cloth._id)
+                clothIds.includes(cloth._id),
               );
 
               clothRequests = await Promise.all(
@@ -85,7 +85,7 @@ const getAllDonations = query({
                     category: clothCategory?.name,
                     quantity: cloth.quantity,
                   };
-                })
+                }),
               );
             }
 
@@ -106,7 +106,7 @@ const getAllDonations = query({
               clothRequests: clothRequests || [],
             };
           }
-        })
+        }),
       );
     }
   },
@@ -114,7 +114,7 @@ const getAllDonations = query({
 
 const getDonationById = query({
   args: {
-    donationId: v.id('donation'),
+    donationId: v.id("donation"),
   },
   handler: async (ctx, args) => {
     const getDonation = await findOneDonation(ctx, {
@@ -135,7 +135,7 @@ const getDonationById = query({
 
       const mapDonationRequestDetails = await findAllMapDonationRequestDetail(
         ctx,
-        {}
+        {},
       );
 
       const clothRequest = await findAllClothRequest(ctx, {});
@@ -161,16 +161,16 @@ const getDonationById = query({
         });
 
         const requestDetails = mapDonationRequestDetails.filter(
-          (details) => details.donationRequestId === donationRequest._id
+          (details) => details.donationRequestId === donationRequest._id,
         );
 
         if (requestDetails.length > 0) {
           const clothIds = requestDetails.map(
-            (details) => details.clothRequestId
+            (details) => details.clothRequestId,
           );
 
           const clothes = clothRequest.filter((cloth) =>
-            clothIds.includes(cloth._id)
+            clothIds.includes(cloth._id),
           );
 
           clothRequests = await Promise.all(
@@ -184,7 +184,7 @@ const getDonationById = query({
                 category: clothCategory?.name,
                 quantity: cloth.quantity,
               };
-            })
+            }),
           );
         }
 
@@ -210,7 +210,7 @@ const getDonationById = query({
 
 const createDonation = mutation({
   args: {
-    donationRequestId: v.id('donation_request'),
+    donationRequestId: v.id("donation_request"),
     startDate: v.string(),
     endDate: v.string(),
   },
@@ -218,14 +218,14 @@ const createDonation = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const getDonationActiveStatusId = await findDonationStatus(ctx, {
-      status: 'ACTIVE',
+      status: "ACTIVE",
     });
 
-    return await ctx.db.insert('donation', {
+    return await ctx.db.insert("donation", {
       donationRequestId: args.donationRequestId,
       statusId: getDonationActiveStatusId,
       startDate: args.startDate,
@@ -236,14 +236,14 @@ const createDonation = mutation({
 
 const updateDonationStatus = mutation({
   args: {
-    donationId: v.id('donation'),
+    donationId: v.id("donation"),
     status: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const getDonation = await findOneDonation(ctx, {
@@ -267,11 +267,13 @@ const updateDonationStatus = mutation({
 const filterDonation = query({
   args: {
     status: v.optional(v.string()),
-    requestId: v.optional(v.id('donation_request')),
+    requestId: v.optional(v.id("donation_request")),
+    endDate: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const status = args.status;
     const requestId = args.requestId;
+    const endDate = args.endDate;
 
     let getDonations;
     if (status) {
@@ -283,6 +285,12 @@ const filterDonation = query({
     if (requestId) {
       getDonations = await findDonation(ctx, {
         donationRequestId: args.requestId,
+      });
+    }
+
+    if (endDate) {
+      getDonations = await findDonation(ctx, {
+        endDate: args.endDate,
       });
     }
 
@@ -325,20 +333,20 @@ const filterDonation = query({
               ctx,
               {
                 id: donationRequest.statusId,
-              }
+              },
             );
 
             const requestDetails = mapDonationRequestDetails.filter(
-              (details) => details.donationRequestId === donationRequest._id
+              (details) => details.donationRequestId === donationRequest._id,
             );
 
             if (requestDetails.length > 0) {
               const clothIds = requestDetails.map(
-                (details) => details.clothRequestId
+                (details) => details.clothRequestId,
               );
 
               const clothes = clothRequest.filter((cloth) =>
-                clothIds.includes(cloth._id)
+                clothIds.includes(cloth._id),
               );
 
               clothRequests = await Promise.all(
@@ -352,7 +360,7 @@ const filterDonation = query({
                     category: clothCategory?.name,
                     quantity: cloth.quantity,
                   };
-                })
+                }),
               );
             }
 
@@ -373,8 +381,73 @@ const filterDonation = query({
               clothRequests: clothRequests || [],
             };
           }
-        })
+        }),
       );
+    }
+  },
+});
+
+const expiredDonation = query({
+  handler: async (ctx) => {
+    const getDonations = await getAllDonations(ctx, {});
+
+    if (getDonations) {
+      return getDonations.filter((donation) => {
+        const currentDate = new Date();
+        let endDate;
+
+        if (donation) {
+          endDate = Date.parse(donation.endDate);
+        }
+        if (endDate) {
+          return Date.parse(currentDate.toString()) > endDate;
+        }
+      });
+    }
+  },
+});
+
+const updateDonationStatusCron = internalMutation({
+  args: {
+    donationId: v.id("donation"),
+    status: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const getDonation = await findOneDonation(ctx, {
+      id: args.donationId,
+    });
+
+    if (!getDonation) {
+      throw new Error(`Donation with ${args.donationId} not found`);
+    }
+
+    const getDonationStatusId = await findDonationStatus(ctx, {
+      status: args.status,
+    });
+
+    return await ctx.db.patch(args.donationId, {
+      statusId: getDonationStatusId,
+    });
+  },
+});
+
+const updateExpiredDonation = mutation({
+  handler: async (ctx) => {
+    const getExpiredDonations = await expiredDonation(ctx, {});
+
+    if (!getExpiredDonations) {
+      throw new Error("No expired donations found");
+    }
+
+    if (getExpiredDonations) {
+      getExpiredDonations.map(async (donation) => {
+        if (donation && donation.donationStatus === "ACTIVE") {
+          return await updateDonationStatusCron(ctx, {
+            donationId: donation.id,
+            status: "DONE",
+          });
+        }
+      });
     }
   },
 });
@@ -385,4 +458,6 @@ export {
   createDonation,
   updateDonationStatus,
   filterDonation,
+  expiredDonation,
+  updateExpiredDonation,
 };

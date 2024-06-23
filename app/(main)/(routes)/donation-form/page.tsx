@@ -1,13 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -78,7 +72,7 @@ const DonationFormPage = () => {
     const deadlineDate = new Date();
     deadlineDate.setDate(deadlineDate.getDate() + 7);
 
-    const formattedDeadline = format(deadlineDate, "MM-dd-yyyy, HH:mm:ss");
+    const formattedDeadline = format(deadlineDate, "MM-dd-yyyy");
     setDeadline(formattedDeadline);
   }, []);
 
@@ -139,6 +133,7 @@ const DonationFormPage = () => {
     try {
       const promise = insertDonationForm({
         donationId: data.donationId as Id<"donation">,
+        deadlineDate: deadline,
         clothDonation: clothes,
       }).then((formId) => {
         router.push(`/dashboard/campaign-detail/${formId}`);
@@ -175,6 +170,7 @@ const DonationFormPage = () => {
                   Judul campaign yang akan kamu sumbang.
                 </FormDescription>
               </div>
+
               <div className="mb-2">
                 <FormLabel>Deskripsi Campaign</FormLabel>
                 <div className="border-2 border-gray-200 p-2 rounded-md">
@@ -407,19 +403,15 @@ const DonationFormPage = () => {
                 Tambah Pakaian <CirclePlus className="ml-2 h-4 w-4" />
               </Button>
               {isLoading && (
-                <CardFooter>
-                  <Button disabled>
-                    Mohon tunggu...
-                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
-                  </Button>
-                </CardFooter>
+                <Button disabled>
+                  Mohon tunggu...
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                </Button>
               )}
               {!isLoading && (
-                <CardFooter>
-                  <Button type="submit">
-                    Kirim Request <SendHorizonal className="ml-2 h-4 w-4" />
-                  </Button>
-                </CardFooter>
+                <Button type="submit">
+                  Kirim Pakaian <SendHorizonal className="ml-2 h-4 w-4" />
+                </Button>
               )}
             </form>
           </Form>

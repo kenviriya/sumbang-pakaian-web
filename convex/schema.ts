@@ -38,7 +38,8 @@ export default defineSchema({
     endDate: v.string(),
   })
     .index("by_status", ["statusId"])
-    .index("by_request", ["donationRequestId"]),
+    .index("by_request", ["donationRequestId"])
+    .index("by_endDate", ["endDate"]),
   // End of Donation
 
   // Donation Form for user donation
@@ -73,16 +74,13 @@ export default defineSchema({
     title: v.string(),
     description: v.string(),
     statusId: v.id("ref_notification_status"),
-  }).index("by_status", ["statusId"]),
+    donationId: v.optional(v.id("donation")),
+    clothId: v.optional(v.id("user_cloth")),
+    donationRequestId: v.optional(v.id("donation_request")),
+  })
+    .index("by_status", ["statusId"])
+    .index("by_user", ["userId"]),
   // End of Notification
-
-  // User Points
-  points: defineTable({
-    userId: v.string(),
-    points: v.number(),
-    clothCount: v.number(),
-  }).index("userId", ["userId"]),
-  // End of User Points
 
   // User Cloth
   user_cloth: defineTable({

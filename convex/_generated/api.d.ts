@@ -18,11 +18,13 @@ import type * as controllers_cloth_controller from "../controllers/cloth_control
 import type * as controllers_donation_controller from "../controllers/donation_controller.js";
 import type * as controllers_donation_form_controller from "../controllers/donation_form_controller.js";
 import type * as controllers_donation_request_controller from "../controllers/donation_request_controller.js";
+import type * as controllers_notification_controller from "../controllers/notification_controller.js";
 import type * as controllers_ref_controller_refClothCategory from "../controllers/ref_controller/refClothCategory.js";
 import type * as controllers_ref_controller_refDonationRequestStatus from "../controllers/ref_controller/refDonationRequestStatus.js";
 import type * as controllers_ref_controller_refDonationStatus from "../controllers/ref_controller/refDonationStatus.js";
 import type * as controllers_ref_controller_refNotificationStatus from "../controllers/ref_controller/refNotificationStatus.js";
 import type * as controllers_ref_controller_refUserClothStatus from "../controllers/ref_controller/refUserClothStatus.js";
+import type * as crons from "../crons.js";
 import type * as repositories_ClothRequestRepository from "../repositories/ClothRequestRepository.js";
 import type * as repositories_DonationFormDetailRepository from "../repositories/DonationFormDetailRepository.js";
 import type * as repositories_DonationFormRepository from "../repositories/DonationFormRepository.js";
@@ -30,10 +32,12 @@ import type * as repositories_DonationRepository from "../repositories/DonationR
 import type * as repositories_DonationRequestRepository from "../repositories/DonationRequestRepository.js";
 import type * as repositories_MapDonationFormDetailsRepository from "../repositories/MapDonationFormDetailsRepository.js";
 import type * as repositories_MapDonationRequestDetailsRepository from "../repositories/MapDonationRequestDetailsRepository.js";
+import type * as repositories_NotificationRepository from "../repositories/NotificationRepository.js";
 import type * as repositories_RefClothCategoryRepository from "../repositories/RefClothCategoryRepository.js";
 import type * as repositories_RefDonationFormStatusRepository from "../repositories/RefDonationFormStatusRepository.js";
 import type * as repositories_RefDonationRequestStatusRepository from "../repositories/RefDonationRequestStatusRepository.js";
 import type * as repositories_RefDonationStatusRepository from "../repositories/RefDonationStatusRepository.js";
+import type * as repositories_RefNotificationStatusRepository from "../repositories/RefNotificationStatusRepository.js";
 import type * as repositories_RefUserClothStatusRepository from "../repositories/RefUserClothStatusRepository.js";
 
 /**
@@ -49,11 +53,13 @@ declare const fullApi: ApiFromModules<{
   "controllers/donation_controller": typeof controllers_donation_controller;
   "controllers/donation_form_controller": typeof controllers_donation_form_controller;
   "controllers/donation_request_controller": typeof controllers_donation_request_controller;
+  "controllers/notification_controller": typeof controllers_notification_controller;
   "controllers/ref_controller/refClothCategory": typeof controllers_ref_controller_refClothCategory;
   "controllers/ref_controller/refDonationRequestStatus": typeof controllers_ref_controller_refDonationRequestStatus;
   "controllers/ref_controller/refDonationStatus": typeof controllers_ref_controller_refDonationStatus;
   "controllers/ref_controller/refNotificationStatus": typeof controllers_ref_controller_refNotificationStatus;
   "controllers/ref_controller/refUserClothStatus": typeof controllers_ref_controller_refUserClothStatus;
+  crons: typeof crons;
   "repositories/ClothRequestRepository": typeof repositories_ClothRequestRepository;
   "repositories/DonationFormDetailRepository": typeof repositories_DonationFormDetailRepository;
   "repositories/DonationFormRepository": typeof repositories_DonationFormRepository;
@@ -61,10 +67,12 @@ declare const fullApi: ApiFromModules<{
   "repositories/DonationRequestRepository": typeof repositories_DonationRequestRepository;
   "repositories/MapDonationFormDetailsRepository": typeof repositories_MapDonationFormDetailsRepository;
   "repositories/MapDonationRequestDetailsRepository": typeof repositories_MapDonationRequestDetailsRepository;
+  "repositories/NotificationRepository": typeof repositories_NotificationRepository;
   "repositories/RefClothCategoryRepository": typeof repositories_RefClothCategoryRepository;
   "repositories/RefDonationFormStatusRepository": typeof repositories_RefDonationFormStatusRepository;
   "repositories/RefDonationRequestStatusRepository": typeof repositories_RefDonationRequestStatusRepository;
   "repositories/RefDonationStatusRepository": typeof repositories_RefDonationStatusRepository;
+  "repositories/RefNotificationStatusRepository": typeof repositories_RefNotificationStatusRepository;
   "repositories/RefUserClothStatusRepository": typeof repositories_RefUserClothStatusRepository;
 }>;
 export declare const api: FilterApi<

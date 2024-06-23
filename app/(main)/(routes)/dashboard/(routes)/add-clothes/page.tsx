@@ -68,6 +68,10 @@ const AddCloth = () => {
     api.controllers.ref_controller.refClothCategory.getAllCategory,
   );
 
+  const sendNotif = useMutation(
+    api.controllers.notification_controller.sendNotificationClothMatch,
+  );
+
   useEffect(() => {
     if (getClothCategory) {
       setClothCategories(getClothCategory.map((category) => category.name));
@@ -98,9 +102,11 @@ const AddCloth = () => {
         gender: data.gender,
         size: data.size,
         description: data.description,
-      }).then(() => {
-        router.push("/dashboard");
-      });
+      })
+        .then(() => {
+          router.push("/dashboard");
+        })
+        .finally(sendNotif);
       toast.promise(createUserCloth, {
         loading: "Sedang mengirim permintaan...",
         success: "Permintaan berhasil dikirim!",
@@ -205,9 +211,9 @@ const AddCloth = () => {
                     <SelectContent>
                       <SelectGroup>
                         <SelectLabel>Gender</SelectLabel>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="unisex">Unisex</SelectItem>
+                        <SelectItem value="MALE">Male</SelectItem>
+                        <SelectItem value="FEMALE">Female</SelectItem>
+                        <SelectItem value="UNISEX">Unisex</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>

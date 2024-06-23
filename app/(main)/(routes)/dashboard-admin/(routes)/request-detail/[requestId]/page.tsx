@@ -44,20 +44,9 @@ const RequestDetailPage = () => {
     });
   };
 
-  // const insertDonation = async () => {
-  //   const startDate = new Date();
-  //   let endDate = new Date();
-  //
-  //   if (getRequest) {
-  //     endDate = new Date(startDate);
-  //     endDate.setDate(endDate.getDate() + getRequest.duration);
-  //   }
-  //   await insertDonation({
-  //     donationRequestId: params.requestId as Id<"donation_request">,
-  //     startDate: format(startDate, "yyyy-MM-dd HH:mm:ss"),
-  //     endDate: format(endDate, "yyyy-MM-dd HH:mm:ss"),
-  //   });
-  // };
+  const sendNotif = useMutation(
+    api.controllers.notification_controller.sendNotificationClothMatch,
+  );
 
   const getStatusApprovedId = useQuery(
     api.controllers.ref_controller.refDonationRequestStatus
@@ -92,13 +81,15 @@ const RequestDetailPage = () => {
 
       const createDonation = insertDonation({
         donationRequestId: params.requestId as Id<"donation_request">,
-        startDate: format(startDate, "MM-dd-yyyy, HH:mm:ss"),
-        endDate: format(endDate, "MM-dd-yyyy, HH:mm:ss"),
+        startDate: format(startDate, "MM-dd-yyyy"),
+        endDate: format(endDate, "MM-dd-yyyy"),
       });
 
-      const updating = Promise.all([updateStatus, createDonation]).then(() => {
-        router.push("/dashboard-admin");
-      });
+      const updating = Promise.all([updateStatus, createDonation])
+        .then(() => {
+          router.push("/dashboard-admin");
+        })
+        .finally(sendNotif);
 
       toast.promise(updating, {
         loading: "Sedang update status...",

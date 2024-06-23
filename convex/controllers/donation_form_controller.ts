@@ -1,32 +1,32 @@
-import {mutation, query} from '../_generated/server';
-import {v} from 'convex/values';
+import { internalMutation, mutation, query } from "../_generated/server";
+import { v } from "convex/values";
 import {
   findAllDonationForms,
   findDonationForm,
   findOneDonationForm,
-} from '@/convex/repositories/DonationFormRepository';
-import {findOneDonation} from '@/convex/repositories/DonationRepository';
+} from "@/convex/repositories/DonationFormRepository";
+import { findOneDonation } from "@/convex/repositories/DonationRepository";
 import {
   findDonationFormStatus,
   findOneDonationFormStatus,
-} from '@/convex/repositories/RefDonationFormStatusRepository';
-import {findAllMapDonationFormDetails} from '@/convex/repositories/MapDonationFormDetailsRepository';
-import {findOneClothCategory} from '@/convex/repositories/RefClothCategoryRepository';
-import {format} from 'date-fns';
-import {getDonationRequestById} from './donation_request_controller';
-import {findOneDonationStatus} from '../repositories/RefDonationStatusRepository';
+} from "@/convex/repositories/RefDonationFormStatusRepository";
+import { findAllMapDonationFormDetails } from "@/convex/repositories/MapDonationFormDetailsRepository";
+import { findOneClothCategory } from "@/convex/repositories/RefClothCategoryRepository";
+
+import { getDonationRequestById } from "./donation_request_controller";
+import { findOneDonationStatus } from "../repositories/RefDonationStatusRepository";
 
 const filterDonationForm = query({
   args: {
-    donationFormId: v.optional(v.id('donation_form')),
-    donationId: v.optional(v.id('donation')),
-    donationRequestId: v.optional(v.id('donation_request')),
+    donationFormId: v.optional(v.id("donation_form")),
+    donationId: v.optional(v.id("donation")),
+    donationRequestId: v.optional(v.id("donation_request")),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const getAllForm = await getAllDonationForm(ctx, {});
@@ -41,7 +41,7 @@ const filterDonationForm = query({
 
     if (args.donationRequestId && getAllForm) {
       return getAllForm.filter(
-        (form) => form.donationRequestId === args.donationRequestId
+        (form) => form.donationRequestId === args.donationRequestId,
       );
     }
   },
@@ -52,7 +52,7 @@ const getAllDonationForm = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const getDonationForms = await findAllDonationForms(ctx, {});
@@ -82,11 +82,11 @@ const getAllDonationForm = query({
 
           const getMapDonationFormDetails = await findAllMapDonationFormDetails(
             ctx,
-            {}
+            {},
           );
 
           const donationFormDetails = getMapDonationFormDetails.filter(
-            (detail) => detail.donationFormId === donationForm._id
+            (detail) => detail.donationFormId === donationForm._id,
           );
 
           let donationFormDetail;
@@ -106,7 +106,7 @@ const getAllDonationForm = query({
                     quantity: clothes.quantity,
                   };
                 }
-              })
+              }),
             );
           }
           return {
@@ -128,7 +128,7 @@ const getAllDonationForm = query({
             deadlineDate: donationForm.deadlineDate,
             donationClothRequest: donationFormDetail,
           };
-        })
+        }),
       );
     }
   },
@@ -136,13 +136,13 @@ const getAllDonationForm = query({
 
 const getDonationFormById = query({
   args: {
-    donationFormId: v.id('donation_form'),
+    donationFormId: v.id("donation_form"),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const getDonationForm = await findOneDonationForm(ctx, {
@@ -172,11 +172,11 @@ const getDonationFormById = query({
 
       const getMapDonationFormDetails = await findAllMapDonationFormDetails(
         ctx,
-        {}
+        {},
       );
 
       const donationFormDetails = getMapDonationFormDetails.filter(
-        (detail) => detail.donationFormId === getDonationForm._id
+        (detail) => detail.donationFormId === getDonationForm._id,
       );
 
       let donationFormDetail;
@@ -196,7 +196,7 @@ const getDonationFormById = query({
                 quantity: clothes.quantity,
               };
             }
-          })
+          }),
         );
       }
       return {
@@ -225,7 +225,7 @@ const getUserDonationForm = query({
   handler: async (ctx) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
     const userId = identity.subject;
 
@@ -258,11 +258,11 @@ const getUserDonationForm = query({
 
           const getMapDonationFormDetails = await findAllMapDonationFormDetails(
             ctx,
-            {}
+            {},
           );
 
           const donationFormDetails = getMapDonationFormDetails.filter(
-            (detail) => detail.donationFormId === donationForm._id
+            (detail) => detail.donationFormId === donationForm._id,
           );
 
           let donationFormDetail;
@@ -282,7 +282,7 @@ const getUserDonationForm = query({
                     quantity: clothes.quantity,
                   };
                 }
-              })
+              }),
             );
           }
           return {
@@ -302,7 +302,7 @@ const getUserDonationForm = query({
             deadlineDate: donationForm.deadlineDate,
             donationClothRequest: donationFormDetail,
           };
-        })
+        }),
       );
     }
   },
@@ -310,35 +310,36 @@ const getUserDonationForm = query({
 
 const createDonationForm = mutation({
   args: {
-    donationId: v.id('donation'),
+    donationId: v.id("donation"),
+    deadlineDate: v.string(),
     clothDonation: v.array(
       v.object({
-        categoryId: v.id('ref_cloth_category'),
+        categoryId: v.id("ref_cloth_category"),
         gender: v.string(),
         size: v.string(),
         quantity: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const userId = identity.subject;
-    const userName = identity.name || '';
+    const userName = identity.name || "";
 
-    const deadlineDate = format(new Date(), 'yyyy-MM-dd, HH:mm:ss');
+    const deadlineDate = args.deadlineDate;
     const getStatusPending = await ctx.db
-      .query('ref_donation_form_status')
-      .withIndex('status', (q) => q.eq('status', 'PENDING'))
+      .query("ref_donation_form_status")
+      .withIndex("status", (q) => q.eq("status", "PENDING"))
       .collect();
 
     const statusId = getStatusPending[0]._id;
 
-    const createDonationForm = await ctx.db.insert('donation_form', {
+    const createDonationForm = await ctx.db.insert("donation_form", {
       userId: userId,
       userName: userName,
       donationId: args.donationId,
@@ -347,12 +348,12 @@ const createDonationForm = mutation({
     });
 
     if (!createDonationForm) {
-      throw new Error('Failed to create donation request');
+      throw new Error("Failed to create donation request");
     }
 
     if (args.clothDonation) {
       for (const clothDonation of args.clothDonation) {
-        const insertClothRequest = await ctx.db.insert('donation_form_detail', {
+        const insertClothRequest = await ctx.db.insert("donation_form_detail", {
           categoryId: clothDonation.categoryId,
           gender: clothDonation.gender,
           size: clothDonation.size,
@@ -360,10 +361,10 @@ const createDonationForm = mutation({
         });
 
         if (!insertClothRequest) {
-          throw new Error('Failed to create cloth request');
+          throw new Error("Failed to create cloth request");
         }
 
-        await ctx.db.insert('map_donation_form_details', {
+        await ctx.db.insert("map_donation_form_details", {
           donationFormId: createDonationForm,
           donationFormDetailId: insertClothRequest,
         });
@@ -376,16 +377,16 @@ const createDonationForm = mutation({
 
 const updateDonationForm = mutation({
   args: {
-    donationFormId: v.id('donation_form'),
+    donationFormId: v.id("donation_form"),
     receipt: v.optional(v.string()),
     status: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const status = args.status || 'PENDING';
+    const status = args.status || "PENDING";
 
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
-      throw new Error('Not authenticated');
+      throw new Error("Not authenticated");
     }
 
     const donationForm = await ctx.db.get(args.donationFormId);
@@ -395,7 +396,7 @@ const updateDonationForm = mutation({
     });
 
     if (!donationForm) {
-      throw new Error('Donation Request not found');
+      throw new Error("Donation Request not found");
     }
 
     if (args.status) {
@@ -411,7 +412,72 @@ const updateDonationForm = mutation({
     }
 
     if (!args.status && !args.receipt) {
-      throw new Error('No data to update');
+      throw new Error("No data to update");
+    }
+  },
+});
+
+const expiredDonationForm = query({
+  handler: async (ctx) => {
+    const getDonationForms = await getAllDonationForm(ctx, {});
+
+    if (getDonationForms) {
+      return getDonationForms.filter((donationForm) => {
+        const currentDate = new Date();
+        let endDate;
+
+        if (donationForm) {
+          endDate = Date.parse(donationForm.deadlineDate);
+        }
+        if (endDate) {
+          return Date.parse(currentDate.toString()) > endDate;
+        }
+      });
+    }
+  },
+});
+
+const updateDonationFormStatusCron = internalMutation({
+  args: {
+    donationFormId: v.id("donation_form"),
+    status: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const getDonation = await findOneDonationForm(ctx, {
+      id: args.donationFormId,
+    });
+
+    if (!getDonation) {
+      throw new Error(`Donation with ${args.donationFormId} not found`);
+    }
+
+    const getDonationFormStatusId = await findDonationFormStatus(ctx, {
+      status: args.status,
+    });
+
+    return await ctx.db.patch(args.donationFormId, {
+      statusId: getDonationFormStatusId,
+    });
+  },
+});
+
+const updateExpiredDonationForm = mutation({
+  handler: async (ctx) => {
+    const getExpiredDonationForms = await expiredDonationForm(ctx, {});
+
+    if (!getExpiredDonationForms) {
+      throw new Error("No expired donations found");
+    }
+
+    if (getExpiredDonationForms) {
+      getExpiredDonationForms.map(async (donationForm) => {
+        if (donationForm && donationForm.formStatus === "PENDING") {
+          return await updateDonationFormStatusCron(ctx, {
+            donationFormId: donationForm.formId,
+            status: "EXPIRED",
+          });
+        }
+      });
     }
   },
 });
@@ -423,4 +489,6 @@ export {
   getUserDonationForm,
   createDonationForm,
   updateDonationForm,
+  updateDonationFormStatusCron,
+  updateExpiredDonationForm,
 };
