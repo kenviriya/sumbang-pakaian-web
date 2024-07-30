@@ -71,8 +71,8 @@ const FormSchema = z.object({
     .min(10, {
       message: 'Deskripsi minimal 10 karakter.',
     })
-    .max(160, {
-      message: 'Deskripsi maksimal 160 karakter.',
+    .max(500, {
+      message: 'Deskripsi maksimal 500 karakter.',
     }),
   name: z
     .string({
@@ -471,8 +471,10 @@ const ArrangeClothes = () => {
                             <SelectContent>
                               <SelectGroup>
                                 <SelectLabel>Gender</SelectLabel>
-                                <SelectItem value="MALE">Male</SelectItem>
-                                <SelectItem value="FEMALE">Female</SelectItem>
+                                <SelectItem value="MALE">Laki Laki</SelectItem>
+                                <SelectItem value="FEMALE">
+                                  Perempuan
+                                </SelectItem>
                                 <SelectItem value="UNISEX">Unisex</SelectItem>
                               </SelectGroup>
                             </SelectContent>
